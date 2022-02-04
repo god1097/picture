@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>promise_all</title>
+</head>
+<body>
+    <script>
+        let p = new Promise((resolve,reject) => {
+            resolve('OK')
+        })
+        let p1 = Promise.resolve('Success')
+        // let p2 = Promise.resolve('111')
+        let p2 = Promise.reject('111')
+
+        const p3 = Promise.all([p,p1,p2])
+
+
+        console.log(p3)
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1</title>
+    <script src="./promise.js"></script>
+</head>
+<body>
+    <script>
+        let p = new Promise((resolve,reject) => {
+            resolve('OK')
+            // setTimeout(() => {
+            //     resolve('OK')
+            // },1000)
+            // reject('error')
+            // throw 'error'
+        })
+        // console.log(p)
+
+        // p.then((value) => {
+        //     console.log(value)
+        // },(reason) => {
+        //     console.warn(reason)
+        // })
+        // p.then((value) => {
+        //     alert(value)
+        // },(reason) => {
+        //     alert(reason)
+        // })
+        const res = p.then((value) => {
+            // console.log(value)
+            // return 'hello promise'
+            return new Promise((resolve,reject) => {
+                // resolve('succes')
+                reject('oh no ')
+            })
+            // throw 'FAil'
+        },(reason) => {
+            console.warn(reason)
+        })
+        console.log(res)
+    </script>
+</body>
+</html>

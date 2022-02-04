@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超时</title>
+    <style>
+        #root{
+            width: 200px;
+            height: 100px;
+            border: solid 1px #258;
+        }
+    </style>
+</head>
+<body>
+    <button>发送请求</button>
+    <div id="root"></div>
+    <script>
+        const btn = document.getElementsByTagName('button')[0]
+        const root = document.getElementById('root')
+        btn.addEventListener('click',function(){
+            const xhr = new XMLHttpRequest
+            xhr.timeout = 2000
+            xhr.ontimeout = function(){
+                alert('网络故障')
+            }
+            xhr.onerror = function(){
+                alert('无网络')
+            }
+            xhr.open('GET','http://localhost:8000/delay')
+            xhr.send()
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4){
+                    if(xhr.status >= 200 && xhr.status < 300){
+                        root.innerHTML = xhr.response
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
