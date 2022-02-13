@@ -8,6 +8,11 @@
 
 而有这么一个库就可以帮助我们来实现需求，那就是 Redux ，它可以帮助我们实现集中式状态管理
 
+=== React_redux的学习用一个简单案例引出，**按钮实现数字加减案例**
+
+image::https://github.com/god1097/picture/blob/main/redux%E5%9B%BE%E7%89%87/01%E6%A1%88%E4%BE%8B.gif[案例]
+
+
 ## 1. 什么情况使用 Redux ？
 
 首先，我们先明晰 `Redux` 的作用 ，实现集中式状态管理。
