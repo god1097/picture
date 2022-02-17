@@ -1,0 +1,761 @@
+= Vue快速入门
+
+=== Vue简单介绍
+
+> 渐进式 JavaScript 框架 
+>
+> 简化Dom操作
+>
+> 响应式数据驱动
+
+=== React 与 Vue 
+
+React 与 Vue 有许多相似之处，它们都有：
+
+> 使用 Virtual DOM
+>
+> 提供了响应式 (Reactive) 和组件化 (Composable) 的视图组件。
+>
+> 将注意力集中保持在核心库，而将其他功能如路由和全局状态管理交给相关的库。
+>
+> React 有比 Vue 更丰富的生态系统。
+
+=== 第一个 Vue 程序
+
+第一步需要引入Vue.js
+
+```js
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+```
+
+第二步创建Vue实例对象，设置el属性和data属性
+
+```js
+  var app = new Vue({
+        el:'#app',                     - el命中的元素内部可以被渲染
+        data:{ message:'Hello Vue!' }  - Vue中用到的数据定义在data中
+  })
+```
+
+第三步将data数据渲染到页面上
+
+```js
+  <div id="app">
+      {{message}}
+  </div>
+  <script>
+      var app = new Vue({
+          el:'#app',
+          data:{ message:'Hello Vue!' }
+      })
+  </script>
+```
+image::[]
+
+
+=== Vue基础 - el挂载点
+
+=== el用来设置Vue实例挂载（管理）的元素
+
+> Q:vue的作用范围
+>
+> A:在el命中的元素内部可以被渲染
+>
+> A:Vue会管理el选项命中的元素及其内部的后代元素
+> 
+> Q:是否可以选用其他的选择器
+>
+> A:可以，但建议使用id选择器
+>
+> Q:是否可以设置其他的dom元素
+>
+> A:可以使用其他的双标签，不能使用HTML和BODY
+
+```js
+  <body>
+      {{message}}
+      <h2 id="app" class="app">
+          {{message}}
+          <span>{{message}}</span>
+      </h2>
+      <script>
+          var app = new Vue({
+              el:'#app',
+              // el:'.app',
+              // el:'body',
+              data:{
+                  message:'Hello world'
+              }
+          })
+      </script>
+  </body>
+```
+=== Vue基础 - data数据对象
+
+=== Vue中用到的数据定义在data中
+
+1. data中可以写复杂类型的数据
+2. 渲染复杂类型数据时，遵循js的语法即可
+
+```js
+  <body>
+      <div id="app">
+          {{message}} 
+          <p>{{school.name}} {{school.mobile}}</p>
+          <ul>
+              <li>{{stu[0]}}</li>
+              <li>{{stu[1]}}</li>
+              <li>{{stu[2]}}</li>
+          </ul>
+      </div>
+      <script>
+          var app = new Vue({
+              el:'#app',
+              data:{message:'hello world',
+                  school:{name:'大学',mobile:'10010'},
+                  stu:['小明','小花','小红']
+              }
+          })
+      </script>
+  </body>
+```
+
+=== Vue基础 - v-text
+
+=== v-text指令的作用：设置标签的内容（textContent）
+
+1.默认写法会替换全部内容，使用差值表达式{undefined{}}可以替换指定内容
+
+2.内部支持写表达式（如字符串拼接）
+
+```js
+  <body>
+      <div id="app">
+          <h2 v-text="message+'!'">yes</h2>
+          <h2 v-text="info+'!'">yes</h2>
+          <h2>{{message+'!'}}yes</h2>
+      </div>
+      <script>
+          var app = new Vue({
+              el:'#app',
+              data:{
+                  message:'hello world',
+                  info:'hello vue'
+              }
+          })
+      </script>
+  </body>
+```
+
+=== Vue基础 - v-html指令
+
+=== v-html指令的作用是:设置元素的innerHTML
+
+1.内容中有html结构会被解析为标签
+
+2.v-text指令无论内容是什么,只会解析为文本
+
+3.解析文本使用v-text,需要解析html结构使用v-html
+
+```js
+  <body>
+      <div id="app">
+          <p v-html="content"></p>
+          <p v-text="content"></p>
+      </div>
+      <script>
+          var app = new Vue({
+              el:'#app',
+              data:{
+                  // content:'hello world'
+                  content:'<a href="#" >hello world</a>'
+              }
+          })
+      </script>
+  </body>
+```
+
+
+=== Vue基础 - v-on指令
+
+=== v-on指令的作用是:为元素绑定事件
+
+1.事件名不需要写on
+
+2.指令可以简写为@
+
+3.绑定的方法定义在methods属性中
+
+4.方法内部通过this关键字可以访问定义在data中数据
+
+```js
+  <body>
+      <div id="app">
+          <h3>{{message}}</h3>
+          <button v-on:click="doIt">v-on指令</button>
+          <button @click="doIt">v-on简写</button>
+          <button @dblclick="doIt">双击</button>
+          <button @click="change">点击换信息</button>
+      </div>
+      <script>
+          var app = new Vue({
+              el:'#app',
+              data:{
+                  message:'hello world'
+              },
+              methods:{
+                  doIt:function(){
+                      alert('doIt')
+                  },
+                  change:function(){
+                      this.message = 'hello vue'
+                  }
+              }
+          })
+      </script>
+  </body>
+```
+
+=== 小练习 - 本地应用-计数器
+
+image::[]
+
+1. data中定义数据:比如num
+
+2. methods中添加两个方法:比如add(递增),minus(递减)
+
+3. 使用v-text将num设置给span标签
+
+4. 使用v-on将add,minus分别绑定给+ -,按钮
+
+5. 累加的逻辑:小于10累加,否则提示.递减的逻辑:大于0递减.否则提示
+
+```js
+  <body>
+      <div id="app" class="div">
+          <div id="css">
+              <button @click="minus">-</button>
+              <span>{{sum}}</span>
+              <button @click="add">+</button>
+          </div>
+      </div>
+      <script>
+          var app = new Vue({
+              el:'#app',
+              data:{
+                  sum:0
+              },
+              methods:{
+                  add:function(){
+                      if(this.sum < 10){
+                          this.sum++
+                      }else{
+                          alert('最大了')
+                      }
+                  },
+                  minus:function(){
+                      if(this.sum > 0){
+                          this.sum--
+                      }else{
+                          alert('最小了')
+                      }
+              }
+          }}
+          )
+      </script>
+  </body>
+```
+=== Vue基础 - v-show指令
+
+=== show指令的作用:根据真假切换元素的显示状态原理是修改元素的display,实现显示隐藏
+
+1.后面的内容,最终都会解析为布尔值
+
+2.true元素显示，值为false元素隐藏
+
+3.改变之后，对应元素的显示状态会同步更新
+
+```js
+  <body>
+    <div id="app">
+        <button @click="changeShow">展示隐藏</button>
+        <button @click="addAge">添加年龄</button>
+        <img src="../../Downloads/95159676_p0.png" v-show="isShow">
+        <img src="../../Downloads/95159676_p0.png" v-show="age>=18">
+    </div>
+    <script>
+        var app = new Vue({
+            el:'#app',
+            data:{
+                isShow:false,
+                age:17
+            },
+            methods:{
+                changeShow:function(){
+                    this.isShow = !(this.isShow)
+                },
+                addAge:function(){
+                    this.age++
+                }
+            }
+        })
+    </script>
+  </body>
+```
+
+=== Vue基础 - v-if指令
+
+=== v-if指令的作用是:根据表达式的真假切换元素的显示状态
+
+1.本质是通过操纵dom元素来切换显示状态
+
+2.表达式的值为true,元素存在于dom树中,为false,从dom树中移除
+
+3.频繁的切换v-show,反之使用v-if,前者的切换消耗小
+
+
+```js
+  <body>
+    <div id="app">
+        <p v-if="isShow">hello world</p>
+        <p v-show="isShow">hello world</p>
+        <button @click="changeShow">切换</button>
+        <p v-if="temp>=35">hot</p>
+    </div>
+    <script>
+        var app = new Vue({
+            el:'#app',
+            data:{
+                isShow:false,
+                temp:20
+            },
+            methods:{
+                changeShow:function(){
+                    this.isShow = !this.isShow
+                }
+            }
+        })
+    </script>
+  </body>
+```
+
+
+=== Vue基础 - v-bind指令
+
+=== v-bind指令的作用是:为元素绑定属性
+
+1.v-bind：属性名=表达式
+
+2.完整写法是v-bind:属性名
+
+3.简写的话可以直接省略v-bind,只保留:属性名
+
+4.需要动态的增删class建议使用对象的方式
+
+```js
+  <body>
+    <div id="app">
+        <img v-bind:src="imgSrc" alt="">
+        <br>
+        <img :src="imgSrc" alt="" @click="changeactive" :title="imgTitle+'!!!'" 
+        :class="isActive ? 'active' :'' ">
+        <br>
+        <img :src="imgSrc" alt="" @click="changeactive" :class="{active:isActive}">
+    </div>
+    <script>
+        var app = new Vue({
+            el:'#app',
+            data:{
+                imgSrc:'http://www.itheima.com/images/logo.png',
+                imgTitle:'heima',
+                isActive:false
+
+            },
+            methods:{
+                changeactive:function(){
+                    this.isActive = !this.isActive
+                }
+            }
+        })
+    </script>
+  </body>
+```
+
+=== Vue基础 - v-for指令
+
+=== v-for指令的作用是:根据数据生成列表结构
+
+1.数组经常和v-for结合使用
+
+2.语法是( item,index ) in数据
+
+3.item和index可以结合其他指令- -起使用
+
+4.数组长度的更新会同步到页面上，是响应式的
+
+
+```js
+  <body>
+    <div id="app">
+        <button @click="addfood">添加食物</button>
+        <button @click="removefood">删除食物</button>
+        <ul>
+            <li v-for="(item,index) in stu ">
+                {{index+1}}---{{item}}
+            </li>
+        </ul>
+        <h2 v-for="item in food">
+            {{item.name}}
+        </h2>
+    </div>
+    <script>
+        var app = new Vue({
+            el:'#app',
+            data:{
+                stu:["小明","小红","小李"],
+                food:[
+                    {name:'蔬菜'},
+                    {name:"鸡蛋"}
+                ]
+            },
+            methods:{
+                addfood:function(){
+                    this.food.push({name:'牛奶'})
+                },
+                removefood:function(){
+                    this.food.shift()
+                }
+            }
+        })
+    </script>
+  </body>
+```
+
+
+=== Vue基础 - v-on指令补充
+
+1.事件绑定的方法写成函数调用的形式，可以传入自定义参数
+
+2.定义方法时需要定义形参来接收传入的实参
+
+3.事件的后面跟上.修饰符可以对事件进行限制
+
+4. .enter可以限制触发的按键为回车
+
+5.事件修饰符有多种,详细参考文档
+
+
+```js
+  <body>
+    <div id="app">
+        <button @click="doIt('HI,brob',666)">点击</button>
+        <input type="text" name="" id="" @keyup.enter="sayHi">
+    </div>
+    <script>
+        var app = new Vue({
+            el:'#app',
+            methods:{
+                sayHi:function(){
+                    alert('Hello')
+                },
+                doIt:function(p,p1){
+                    console.log(p,p1)
+                }
+            }
+        })
+    </script>
+  </body>
+```
+
+=== Vue基础 - v-model指令
+
+=== v-model指令的作用是：获取和设置表单元素的值(双向数据绑定)
+
+1.v-model指令的作用是便捷的设置和获取表单元素的值
+
+2.绑定的数据会和表单元素值相关联
+
+3.绑定的数据←→表单元素的值
+
+
+```js
+  <body>
+    <div id="app">
+        <button @click="setM">更改消息</button>
+        <input type="text" name="" id="" v-model="message" @keyup.enter="getM">
+        <h2>{{message}}</h2>
+    </div>
+    <script>
+        var app = new Vue({
+            el:'#app',
+            data:{message:'Hello'},
+            methods:{
+                setM:function(){
+                    this.message = 'YES!!!'
+                },
+                getM:function(){
+                    alert(this.message)
+                }
+            }
+        })
+    </script>
+  </body>
+```
+
+=== 小练习 - 记事本
+
+iamge::[]
+
+1. 列表结构可以通过v-for指令结合数据生成
+
+2. v-on结合事件修饰符可以对事件进行限制,比如.enter
+
+3. v-on在绑定事件时可以传递自定义参数
+
+4. 通过v-model可以快速的设置和获取表单元素的值
+
+5. 基于数据的开发方式
+
+```js
+  <body>
+    <!-- 主体区域 -->
+    <section id="todoapp">
+      <!-- 输入框 -->
+      <header class="header">
+        <h1>记事本</h1>
+        <input v-model="input" @keyup.enter="add" autofocus="autofocus" autocomplete="off" placeholder="请输入任务"
+          class="new-todo" />
+      </header>
+      <!-- 列表区域 -->
+      <section class="main">
+        <ul class="todo-list">
+          <li class="todo" v-for="(item,index) in list">
+            <div class="view">
+              <span class="index">{{index + 1}}</span>
+              <label>{{item}}</label>
+              <button class="destroy" @click="remove(index)"></button>
+            </div>
+          </li>
+        </ul>
+      </section>
+      <!-- 统计和清空 -->
+      <footer class="footer" >
+        <span class="todo-count" v-if="list.length!=0">
+          <strong>{{list.length}}</strong> items left
+        </span>
+        <button v-show="list.length!=0" class="clear-completed" @click="clear">
+          Clear
+        </button>
+      </footer>
+    </section>
+    <!-- 底部 -->
+    <footer class="info">
+      <p>
+        <a href="#"></a>
+      </p>
+    </footer>
+    <script>
+      var app = new Vue({
+          el:'#todoapp',
+          data:{
+              list:['吃饭','睡觉','打代码'],
+              input:''
+          },
+          methods:{
+              add:function(){
+                   this.list.push(this.input)
+                   this.input = ''
+              },
+              remove:function(index){
+                  this.list.splice(index,1)
+              },
+              clear:function(){
+                  this.list = []
+              }
+          }
+      })
+    </script>
+  </body>
+```
+
+== Vue+axios 网络应用案例（一） 天气查询
+
+
+```js
+  <body>
+    <div class="wrap" id="app">
+        <div class="search_form">
+          <div class="logo"></div>
+          <div class="form_group">
+            <input type="text" class="input_txt" placeholder="请输入查询的天气" @keyup.enter="searchweatcher" v-model="city" />
+            <button class="input_sub" @click="searchweatcher">
+              搜 索
+            </button>
+          </div>
+          <div class="hotkey">
+            <a href="javascript:;" @click="clickSearch('北京')">北京</a>
+              <a href="javascript:;" @click="clickSearch('上海')">上海</a>
+              <a href="javascript:;" @click="clickSearch('广州')">广州</a>
+              <a href="javascript:;" @click="clickSearch('深圳')">深圳</a>
+            <a href="javascript:;"></a>
+          </div>
+        </div>
+        <ul class="weather_list">
+          <li v-for="(item,index) in citys">
+            <div class="info_type">
+              <span class="iconfont">{{item.type}}</span>
+            </div>
+            <div class="info_temp">
+              <b>{{item.low}}</b>
+              ~
+              <b>{{item.high}}</b>
+            </div>
+            <div class="info_date">
+              <span>{{ item.date }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+     <script>
+         var app = new Vue({
+             el:'#app',
+             data:{
+                 city:'',
+                 citys:[]
+             },
+             methods:{
+                 searchweatcher:function(){
+                     this.citys = [];
+                     if(this.city.trim() === '') return alert('请输入城市')
+                     axios.get(`http://wthrcdn.etouch.cn/weather_mini?city=${this.city}`).then(
+                         response => this.citys = response.data.data.forecast,
+                         reason => console.log(reason.message)
+                     ).finally(() => {  }).catch((reason) => {
+                         console.log(reason.message)
+                     }),
+                     this.city = ''
+                 },
+                 clickSearch:function(city){
+                     this.city = city
+                     this.searchweatcher()
+                 }
+             }
+         })
+     </script>
+  </body>
+```
+== Vue+axios 网络应用案例（二） 音乐播放器
+
+iamge::[]
+
+```js
+  <body>
+    <div class="wrap">
+      <!-- 播放器主体区域 -->
+      <div class="play_wrap" id="player">
+        <div class="search_bar">
+          <img src="./images/player_title.png" alt="" />
+          <!-- 搜索歌曲 -->
+          <input type="text" autocomplete="off" v-model="query" @keyup.enter="searchmusic" />
+        </div>
+        <div class="center_con">
+          <!-- 搜索歌曲列表 -->
+          <div class='song_wrapper'>
+            <ul class="song_list">
+              <li v-for="item in musiclist">
+                <a href="javascript:;" @click="playMusic(item.id)"></a> 
+                <b>{{item.name}}</b> 
+                <span @click="playMV(item.mvid)" v-if="item.mvid"><i></i></span>
+              </li>
+            </ul>
+            <img src="./images/line.png" class="switch_btn" alt="">
+          </div>
+          <!-- 歌曲信息容器 -->
+          <div class="player_con" :class="{playing:isPlaying}">
+            <img src="./images/player_bar.png" class="play_bar" />
+            <!-- 黑胶碟片 -->
+            <img src="./images/disc.png" class="disc autoRotate" />
+            <img :src="musiccover" class="cover autoRotate" />
+          </div>
+          <!-- 评论容器 -->
+          <div class="comment_wrapper">
+            <h5 class='title'>热门留言</h5>
+            <div class='comment_list'>
+              <dl v-for="item in hotComments">
+                <dt><img :src="item.user.avatarUrl" alt=""></dt>
+                <dd class="name">{{item.user.nickname}}</dd>
+                <dd class="detail">
+                    {{item.content}}
+                </dd>
+              </dl>
+            </div>
+            <img src="./images/line.png" class="right_line">
+          </div>
+        </div>
+        <div class="audio_con">
+          <audio ref='audio' :src="musicurl" @play="play" @pause="pause" controls autoplay loop class="myaudio"></audio>
+        </div>
+        <div class="video_con" v-show="mvplay" style="display: none;">
+          <video :src="MvUrl" controls="controls"></video>
+          <div class="mask" @click="hide"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el:'#player',
+            data:{
+                musiclist:[],
+                query:'',
+                musicurl:'',
+                musiccover:'',
+                hotComments:[],
+                isPlaying:false,
+                MvUrl:"",
+                mvplay:false
+            },
+            methods:{
+                searchmusic:function(){
+                    if(this.query.trim() === '') return alert('请输入曲名')
+                    axios.get(`https://autumnfish.cn/search?keywords=${this.query}`).then(
+                        response => this.musiclist = response.data.result.songs,
+                        reason => console.log(reason.message)
+                    )
+                    this.query = ''
+
+                },
+                playMusic:function(id){
+                    this.musicurl = `https://music.163.com/song/media/outer/url?id=${id}.mp3`
+                    axios.get(`https://autumnfish.cn/album?id=${id}`).then(
+                        response => this.musiccover = response.data.album.blurPicUrl,
+                        reason => console.log(reason.message)
+                    ),
+                    axios.get(`https://autumnfish.cn/comment/hot?type=0&id=${id}`).then(
+                        response => this.hotComments = response.data.hotComments,
+                        reason => console.log(reason.message)
+                    )
+                },
+                play:function(){
+                    this.isPlaying = true
+                },
+                pause:function(){
+                    this.isPlaying = false
+                },
+                playMV:function(id){
+                    this.mvplay = true
+                    axios.get(`https://autumnfish.cn/mv/url?id=${id}`).then(
+                        response => this.MvUrl = response.data.data.url,
+                        reason => console.log(reason.message)
+                    )
+                },
+                hide:function(){
+                    this.mvplay = false
+                    this.MvUrl = ''
+                }
+            }
+        })
+    </script>
+  </body>
+```
+
+
