@@ -52,6 +52,8 @@ React 与 Vue 有许多相似之处，它们都有：
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/1.hello%20vue.png[hello vue]
 
+---
+
 
 === Vue基础 - el挂载点
 
@@ -93,6 +95,8 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/1.hell
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/2.el%E6%8C%82%E8%BD%BD%E7%82%B9.png[el挂载点]
 
+---
+
 === Vue基础 - data数据对象
 
 === Vue中用到的数据定义在data中
@@ -125,6 +129,10 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/2.el%E
 
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/3.data%E6%95%B0%E6%8D%AE%E5%AF%B9%E8%B1%A1.png[data数据对象]
 
+
+---
+
+
 === Vue基础 - v-text
 
 === v-text指令的作用：设置标签的内容（textContent）
@@ -152,6 +160,10 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/3.data
   </body>
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/4.v-text.png[v-text]
+
+
+---
+
 
 === Vue基础 - v-html指令
 
@@ -181,6 +193,8 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/4.v-te
   </body>
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/5.v-html.png[v-html]
+
+---
 
 === Vue基础 - v-on指令
 
@@ -224,9 +238,11 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/5.v-ht
 
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/6.v-on.png[v-on]
 
+---
+
 === 小练习 - 本地应用-计数器
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/7.%E8%AE%A1%E6%95%B0%E5%99%A8.gif[计数器]
 
 1. data中定义数据:比如num
 
@@ -274,7 +290,7 @@ image::[]
   </body>
 ```
 
-image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/7.%E8%AE%A1%E6%95%B0%E5%99%A8.gif[计数器]
+---
 
 === Vue基础 - v-show指令
 
@@ -313,6 +329,7 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/7.%E8%
     </script>
   </body>
 ```
+---
 
 === Vue基础 - v-if指令
 
@@ -350,6 +367,9 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/7.%E8%
   </body>
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/9.v-if.gif[v-if]
+
+
+---
 
 === Vue基础 - v-bind指令
 
@@ -392,6 +412,9 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/9.v-if
   </body>
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/10.v-bind.png[v-bind]
+
+
+---
 
 === Vue基础 - v-for指令
 
@@ -444,6 +467,9 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/10.v-b
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/12.v-for.gif[v-for]
 
+
+---
+
 === Vue基础 - v-on指令补充
 
 1.事件绑定的方法写成函数调用的形式，可以传入自定义参数
@@ -479,6 +505,10 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/12.v-f
   </body>
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/13.v-on%E8%A1%A5%E5%85%85.gif[v-on补充]
+
+
+---
+
 
 === Vue基础 - v-model指令
 
@@ -516,9 +546,13 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/13.v-o
 ```
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/14.v-model.gif[v-model]
 
+
+---
+
+
 === 小练习 - 记事本
 
-iamge::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/15.%E8%AE%B0%E4%BA%8B%E6%9C%AC.gif[记事本]
+image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/15.%E8%AE%B0%E4%BA%8B%E6%9C%AC.gif[记事本]
 
 1. 列表结构可以通过v-for指令结合数据生成
 
@@ -592,6 +626,10 @@ iamge::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/15.%E8
   </body>
 ```
 
+
+---
+
+
 == Vue+axios 网络应用案例（一） 天气查询
 
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/17.%E5%A4%A9%E6%B0%94%E6%9F%A5%E8%AF%A2.gif[天气查询]
@@ -659,6 +697,12 @@ image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/17.%E5
      </script>
   </body>
 ```
+
+
+---
+
+
+
 == Vue+axios 网络应用案例（二） 音乐播放器
 
 image::https://github.com/god1097/picture/blob/main/Vue%E5%9B%BE%E7%89%87/18.%E6%92%AD%E6%94%BE%E5%99%A8.gif[播放器]
