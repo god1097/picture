@@ -1,0 +1,142 @@
+# (一)Spring介绍
+
+## **1.1 Spring** **框架是什么**
+
+> - Spring 是于 2003 年兴起的一个轻量级的 Java 开发框架，它是为了解决企业应用开发的复杂性而创建的。Spring 的核心是**控制反转（IoC）和面向切面编程（AOP）**。Spring 是可以在 Java SE/EE 中使用的轻量级开源框架。
+> - **Spring 的主要作用就是为代码“解耦”，降低代码间的耦合度。就是让对象和对象（模块和模块）之间关系不是使用代码关联，而是通过配置来说明**。即在 Spring 中说明对象（模块）的关系。
+> - Spring 根据代码的功能特点，**使用 Ioc 降低业务对象之间耦合度**。IoC 使得主业务在相互调用过程中，不用再自己维护关系了，即不用再自己创建要使用的对象了。而是由 Spring容器统一管理，自动“注入”,注入即赋值。 而 **AOP 使得系统级服务得到了最大复用**，且不用再由程序员手工将系统级服务“混杂”到主业务逻辑中了，而是由 Spring 容器统一完成“织入”。
+
+## **1.2 Spring** **优点？**
+
+> - 它是一个容器管理对象，容器是装东西的，Spring 容器不装文本，数字。**装的是对象。Spring 是存储对象的容器。**
+
+### **（1） 轻量**
+
+> - Spring 核心功能的所需的 jar 总共在 3M 左右。Spring 框架运行占用的资源少，运行效率高。不依赖其他 jar
+
+### **（2） 针对接口编程，解耦合**
+
+> - Spring 提供了 Ioc 控制反转，由容器管理对象，对象的依赖关系。原来在程序代码中的对象创建方式，现在由容器完成。对象之间的依赖解耦合。
+
+### （3） AOP 编程的支持
+
+> - 通过 Spring 提供的 AOP 功能，方便进行面向切面的编程，许多不容易用传统 OOP （面向对象程序设计）实现的功能可以通过 AOP 轻松应付
+> - 在 Spring 中，开发人员可以从繁杂的事务管理代码中解脱出来，通过声明式方式灵活地进行事务的管理，提高开发效率和质量。
+
+### **（4） 方便集成各种优秀框架**
+
+> - Spring 不排斥各种优秀的开源框架，相反 Spring 可以降低各种框架的使用难度，**Spring提供了对各种优秀框架（如 Struts,Hibernate、MyBatis）等的直接支持**。简化框架的使用。
+> - Spring 像插线板一样，其他框架是插头，可以容易的组合到一起。需要使用哪个框架，就把这个插头放入插线板。不需要可以轻易的移除。
+
+## **1.3 Spring** **体系结构**
+
+image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.gif[体系结构]
+
+> - Spring 由 20 多个模块组成，它们可以分为数据访问/集成（Data Access/Integration）、Web、面向切面编程（AOP, Aspects）、提供JVM的代理（Instrumentation）、消息发送（Messaging）、核心容器（Core Container）和测试（Test）。
+
+**模块介绍**
+
+image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E6%A8%A1%E5%9D%97%E4%BB%8B%E7%BB%8D.png[模块介绍]
+
+
+## **1.4 总结**
+
+> - Spring 主要学习两个核心部分：IoC 和AOP
+
+> - IoC：控制反转，把创建对象过程交给 Spring进行管理
+> - AOP：面向切面，不修改源代码进行功能增强
+
+
+# (二)第一个Spring项目
+
+
+## **2. 第一个** **Spring项目**
+
+### **（1） 下载Spring**
+
+> - https://repo.spring.io/ui/native/release/org/springframework/spring/[下载链接]
+
+image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E4%B8%8B%E8%BD%BDSpring.png[下载Spring]
+
+**下载解压核心jar包并导入项目**
+
+image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E4%B8%8B%E8%BD%BD%E8%A7%A3%E5%8E%8B.png[下载解压]
+
+并导入一个commons-logging 依赖 https://commons.apache.org/proper/commons-logging/download_logging.cgi[官网下载]
+
+**或使用Maven坐标导入依赖**
+
+```xml
+  <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>5.3.15</version>
+      <scope>compile</scope>
+  </dependency>
+  <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>5.3.15</version>
+      <scope>compile</scope>
+  </dependency>
+  <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>5.3.15</version>
+      <scope>compile</scope>
+  </dependency>
+  <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>5.3.15</version>
+      <scope>compile</scope>
+  </dependency>
+  <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.2</version>
+      <scope>compile</scope>
+  </dependency>
+```
+### **（2） 创建一个User.java类**
+
+```java
+  public class User {
+      public void getuser(){
+          System.out.println("getuser.......");
+      }
+  }
+```
+### **（3） 在resources下** **创建一个Spring配置文件**
+
+image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E6%B7%BB%E5%8A%A0Spring%E9%85%8D%E7%BD%AE.png[添加Spring配置]
+
+```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+      <!--配置User对象创建-->
+      <bean id="user" class="com.jiahao.User.User"></bean>
+  </beans>
+```
+
+### **（4） 在test目录下** **创建一个测试类**
+
+```java
+  @Test
+  public void test1(){
+      ApplicationContext context = new ClassPathXmlApplicationContext("bean1.xml");
+      User user = context.getBean("user", User.class);
+      System.out.println(user);
+      user.getuser();
+  }
+```
+### **（5） 运行单元测试**
+
+image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E7%AC%AC%E4%B8%80%E4%B8%AASpring%E7%A8%8B%E5%BA%8F.png[第一个Spring程序]
+
+> - 这样就实现了将对象的创建过程，交给了Spring，完成了第一个Spring项目
+
+
+
