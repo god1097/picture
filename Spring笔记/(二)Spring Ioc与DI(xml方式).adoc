@@ -116,7 +116,7 @@ image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E6
 image::https://github.com/god1097/picture/blob/main/Spring%E5%9B%BE%E7%89%87/%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E6%B5%8B%E8%AF%95%E7%B1%BB.png[测试类]
 
 
-### **2.3.2** **引用类型属性自动注入**
+### **2.2.2** **引用类型属性自动注入**
 
 > 对于引用类型属性的注入，也可不在配置文件中显示的注入。可以通过为<bean/>标签
 > **设置 autowire 属性值**，为引用类型属性进行**隐式自动注入**（默认是不自动注入引用类型属 性）。根据自动注入判断标准的不同，可以分为两种：
