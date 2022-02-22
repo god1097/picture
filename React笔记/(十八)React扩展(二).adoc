@@ -10,7 +10,7 @@
   content = "<p>Hello React</p>"
 ```
 > - **因安全原因，React当中所有表达式的内容会被转义，如果直接输入，标签会被当成文本。**
-> - **这时候 就需要使用 `dangerouslySetHTM` 属性，它允许我们动态设置 `innerHTML` **
+> - **这时候 就需要使用 `dangerouslySetHTM ` 属性，它允许我们动态设置 `innerHTML` **
 
 
 ```jsx
