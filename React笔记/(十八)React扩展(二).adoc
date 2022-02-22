@@ -1,0 +1,254 @@
+# React 扩展（二）
+
+## 1. dangerouslySetInnerHTML
+
+### 富文本数据
+
+> - **富文本创建的内容，后台拿到的数据是这样的:**
+
+```html
+  content = "<p>Hello React</p>"
+```
+> - **因安全原因，React当中所有表达式的内容会被转义，如果直接输入，标签会被当成文本。**
+> - **这时候 就需要使用 `dangerouslySetHTM` 属性，它允许我们动态设置 `innerHTML` **
+
+
+```jsx
+  state = {
+      myhtml:`<span>hello dangerouslySetInnerHTML
+              <h2>hello</h2>
+              </span>`
+          }
+  render() {
+      return (
+          <div dangerouslySetInnerHTML={
+              {__html:this.state.myhtml}
+          }>
+              {/*{this.state.myhtml}*/}
+          </div>
+      );
+  }
+```
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%AF%8C%E6%96%87%E6%9C%AC%E4%B8%80.png[富文本一]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%AF%8C%E6%96%87%E6%9C%AC%E4%BA%8C.png[富文本二]
+
+---
+
+
+## 2. React+axios
+
+### 卖座电影-模糊搜索
+
+案例演示:
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%8D%96%E5%BA%A7%E7%94%B5%E5%BD%B1.gif[卖座电影]
+
+### 一、实现静态组件
+
+> - 先实现静态组件，在实现静态组件之前，还需要拆分组件，这个Mobile端的页面，可以分功能将它拆成三个组件，分别为 `电影` `影院` `我的`
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%8D%96%E5%BA%A7%E7%94%B5%E5%BD%B1%E4%B8%80.png[卖座电影one]
+
+### 二、axios 发送请求
+
+> - 发送请求之前需要知道向哪里发送请求，这里可以直接拿卖座电影的接口即可，使用浏览器开发者工具抓包影院查询接口和相应的请求头信息
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%8D%96%E5%BA%A7%E7%94%B5%E5%BD%B1%E4%BA%8C.png[卖座电影二]
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%8D%96%E5%BA%A7%E7%94%B5%E5%BD%B1%E4%B8%89.png[卖座电影三]
+
+> - 抓包响应头信息可知，卖座电影服务器已解决跨域问题，直接发送axios信息不会出现跨域问题
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%8D%96%E5%BA%A7%E7%94%B5%E5%BD%B1%E5%9B%9B.png[卖座电影四]
+
+> - 所以可以在 `componentDidMount` 生命周期直接发送AJAX请求并携带请求验证信息即可
+
+```jsx
+  componentDidMount() {
+      axios({
+          url:'https://m.maizuo.com/gateway?cityId=110100&ticketFlag=1&k=5267084',
+          method:'GET',
+          headers:{'X-Client-Info':'{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"442000"}',
+                   'X-Host': 'mall.film-ticket.cinema.list'}
+      }).then((response)=> {
+          this.setState({yingyuanlist:response.data.data.cinemas})
+          this.setState({backgroundlist:response.data.data.cinemas})
+      },(reason) => {
+          console.log(reason.message)
+      })
+  }
+```
+
+### 三、渲染数据
+
+> - 响应信息中拿取数据存入状态，render遍历集合展示信息到页面
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%93%8D%E5%BA%94%E4%BF%A1%E6%81%AF.png[响应信息]
+
+> - 这里完成数据初步展示后，即可继续实现模糊查询功能
+
+> - 定义一个 `input` 框，受控组件或非受控组件方式拿取 `input` 框数据，使用filter过滤数据即可 （filter特性不会改变原数组）
+
+```jsx
+  handlerInput = (event) => {
+      const newlist = this.state.backgroundlist.filter(item => {
+         return  item.name.toUpperCase().includes(event.target.value.toUpperCase())
+          || item.address.toUpperCase().includes(event.target.value.toUpperCase())
+      })
+      this.setState({yingyuanlist:newlist})
+  }
+```
+> - 最后一步，state状态发生改变，驱动render重新渲染遍历结果到页面
+
+```jsx
+  {
+      this.state.yingyuanlist.map(item=>{
+         return <dl key={item.cinemaId}>
+              <dt>{item.name}</dt>
+              <dd>{item.address}</dd>
+          </dl>
+      })
+  }
+```
+> - 即实现模糊查询效果
+
+
+---
+
+
+
+## 3. React+自定义Swiper组件+插槽
+
+### 卖座电影-轮播图
+
+> - **Swiper**
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/Swiper.png[Swiper]
+
+> - Swiper 是一款免费以及轻量级的移动设备触控滑块的js框架，使用硬件加速过渡，主要使用于移动端的网站
+> - 这里可以通过Swiper实现模拟实现卖座电影首页轮播图效果
+
+案例演示:
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E8%BD%AE%E6%92%AD%E5%9B%BE.gif[轮播图]
+
+卖座电影官网效果:
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E5%8D%96%E5%BA%A7%E7%94%B5%E5%BD%B1%E5%AE%98%E6%96%B9.gif[卖座电影官网]
+
+### Swiper使用参考官方文档
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/swiper%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3.png[官方文档]
+
+> - 可以和 `componentDidMount` 生命周期钩子配合使用，创建Swiper对象
+
+```jsx
+  componentDidMount() {
+       new Swiper('.swiper', {
+          modules: [Navigation, Pagination],
+          pagination: {
+              el: '.swiper-pagination'
+          },
+      })
+  }
+```
+
+=== 自定义组件**Swiper**
+
+> - 第一步npm下载 `swiper` ，暴露出相应组件
+```jsx
+  import Swiper, { Navigation, Pagination } from "swiper";
+```
+> - 第二步 `render` 中预留 `children` 插槽
+
+```jsx
+  render() {
+      return (
+          <div>
+              <div className="swiper">
+                  <div className='swiper-wrapper'>
+                      {this.props.children}//预留插槽
+                  </div>
+                  <div className="swiper-pagination"></div>
+              </div>
+          </div>
+      );
+  }
+```
+> - 第三步，将此模版一般组件暴露出去
+
+```jsx
+  export default Kswiper;
+```
+> - 第四步，为渲染细项定义SwiperItem自定义组件
+
+
+```jsx
+  render() {
+      return (
+          <div className="swiper-slide">
+              {this.props.children}      //预留插槽
+          </div>
+      );
+  }
+```
+
+> - 第五步，将此一般组件暴露出去
+
+```jsx
+  export default KSwiperItem;
+```
+
+### 使用自定义Swiper组件
+
+> - 需要使用Swiper组件时，可以引入自定义Swiper组件（高复用，自定义程度高）
+
+```jsx
+  import KSwiper from "./5_swiper_component/KSwiper";
+  import KSwiperItem from "./5_swiper_component/KSwiperItem";
+```
+> - 就此案例而言，发送AJAX请求获取轮播图图片数据，将其遍历到相应自定义Swiper组件预留的插槽中即可实现
+
+> - 使用浏览器开发者工具抓包轮播图接口和相应的请求头信息
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E8%BD%AE%E6%92%AD%E5%9B%BE%E4%BF%A1%E6%81%AF%E4%B8%80.png[轮播图信息一]
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%BA%8C/%E8%BD%AE%E6%92%AD%E5%9B%BE%E4%BF%A1%E6%81%AF.png[轮播图信息二]
+
+> - 在 `componentDidMount` 生命周期钩子发送AJAX请求，请求轮播图信息后储存到state状态中
+
+```jsx
+  componentDidMount() {
+      axios({
+          url:"https://m.maizuo.com/gateway?type=2&cityId=442000&k=5402781",
+          headers:{
+              'X-Client-Info':'{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"442000"}',
+              'X-Host':'mall.cfg.common-banner'
+          }
+      }).then(response => {
+          this.setState({list:response.data.data})
+      },reason => console.log(reason.message))
+  }
+```
+> - 最后使用引入的自定义Swiper组件，将响应数据遍历到对应Swiper组件插槽中
+
+```jsx
+  render()
+  {
+      return (
+          <div>
+              <KSwiper loop={true} >
+                  {this.state.list.map((item) =>
+                      <KSwiperItem key={item.bannerId}>
+                          <img src={item.imgUrl} alt={item.name} style={{width: '100%'}}/>
+                          {/*{item.name}*/}
+                      </KSwiperItem>
+                  )}
+              </KSwiper>
+          </div>
+      );
+  }
+```
+
+---
+
