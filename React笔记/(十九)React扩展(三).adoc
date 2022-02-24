@@ -64,8 +64,8 @@
       }
     }
 ```
-image::[]
-
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/1.%20useCallback(%E8%AE%B0%E5%BF%86%E5%87%BD%E6%95%B0).gif[useCallback1]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/1.%20useCallback(%E8%AE%B0%E5%BF%86%E5%87%BD%E6%95%B0).png[useCallback2]
 ---
 
 ## 2. useMemo(记忆组件)
@@ -121,8 +121,8 @@ image::[]
   }
 ```
 
-image::[]
-
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/2.%20useMemo(%E8%AE%B0%E5%BF%86%E7%BB%84%E4%BB%B6).gif[useMemo1]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/2.%20useMemo(%E8%AE%B0%E5%BF%86%E7%BB%84%E4%BB%B6).png[useMemo2]
 
 ---
 
@@ -151,7 +151,7 @@ image::[]
   );
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/3.%20useRef(%E4%BF%9D%E5%AD%98%E5%BC%95%E7%94%A8%E5%80%BC).gif[useRef]
 
 ---
 
@@ -215,7 +215,7 @@ image::[]
 
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/4.%20useContext(%E5%87%8F%E5%B0%91%E7%BB%84%E4%BB%B6%E5%B1%82%E7%BA%A7).gif[useContext]
 
 ---
 
@@ -269,7 +269,7 @@ image::[]
 
 
 ```
-
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/5.%20useReducer1.gif[useReducer1]
 
 - 案例(useReducer+useContext[如虎添翼]):
 
@@ -337,6 +337,7 @@ image::[]
       </div>
   }
 ```
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/5.%20useReducer2.gif[useReducer2]
 
 - 案例(useReducer+useContext完善电影信息展示案例):
 
@@ -412,6 +413,7 @@ image::[]
   }
 
 ```
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/5.%20useReducer3.gif[useReducer3]
 
 ---
 
@@ -480,5 +482,6 @@ image::[]
   }
 
 ```
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/6.%20%E8%87%AA%E5%AE%9A%E4%B9%89hooks.gif[自定义hooks]
 
 ---
