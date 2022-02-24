@@ -271,6 +271,8 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
 ```
 image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/5.%20useReducer1.gif[useReducer1]
 
+---
+
 - 案例(useReducer+useContext[如虎添翼]):
 
 
@@ -338,6 +340,9 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
   }
 ```
 image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%89/5.%20useReducer2.gif[useReducer2]
+
+
+---
 
 - 案例(useReducer+useContext完善电影信息展示案例):
 
