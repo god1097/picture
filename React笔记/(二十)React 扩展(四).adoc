@@ -1,0 +1,348 @@
+# React 扩展（三）
+
+## 1. Flux与Redux概念补充:
+=== Flux 是一种架构思想，专门解决软件的结构问题。它跟MVC架构是同一类东西，但是更加简单和 清晰。Flux存在多种实现(至少15种)
+
+=== https://github.com/voronianski/flux-comparison[Flux与Redux]
+
+> - Facebook Flux是用来构建客户端Web应用的应用架构。它利用单向数据流的方式来组合React中的视图组件。
+> 
+> - 它更像一个模式而不是一个正式的框架，开发者不需要太多的新代码就可以快速的上手Flux。
+>
+> - Redux最主要是用作应用状态的管理。简言之，Redux用一个单独的常量状态树(state对象)保存这一整个应用的状态，这个对象不能直接被改变。
+> - 当一些数据变化了，一个新的对象就会被创建(使用actions和reducers)，这样就可以进行数据追踪，实现时光旅行。
+
+---
+
+## 2. Redux持久化存储:
+=== store 状态树的state并不是持久保存的，在浏览器端刷新之后数据会消失，需要重新获取。这个时候就需要Redux store数据的持久化
+
+=== 刚好 `redux-persist` 这个插件就是用来做数据的持久化的，它的原理就是把Redux的store中的数据缓存到浏览器的localStorage中
+
+=== https://github.com/rt2zz/redux-persist[redux-persist仓库]
+
+> - **(1) `npm install redux-persist` **
+
+> - **(2) 在store页面中引用 `redux-persist` **
+
+image::[]
+
+> - **(3) 改造store **
+
+```jsx
+  const persistConfig = {
+    key: 'root',
+    storage,
+    // WHITELIST
+    // whitelist: ['xxx']
+    // BLACKLIST
+    // blacklist: ['xxx']
+  }
+```
+
+```jsx
+  const persistedReducer = persistReducer(persistConfig, reducers)
+  const store = createStore(persistedReducer,composeWithDevTools(applyMiddleware(thunk)))
+  const persistor = persistStore(store)
+  export {store,persistor}
+```
+> - **(4) 改造 `index.js` 入口文件 **
+
+
+```jsx
+  import { store , persistor } from './redux/store'
+  import { PersistGate } from 'redux-persist/integration/react'
+  ReactDOM.render(<Provider store={store}>
+                    <PersistGate loading={null} persistor={persistor}>
+                    <App/>
+                    </PersistGate>
+                  </Provider>,
+                  document.getElementById('root'))
+```
+
+image::[]
+
+---
+
+## 3. Immutable:
+
+=== https://github.com/immutable-js/immutable-js[Immutable文档]
+
+=== 深拷贝与浅拷贝
+
+> - (1) var arr = { }  arr2 = arr 
+> - (2) Object.assign() 只是一级属性复制，比浅拷贝多拷贝了一层而已。
+> - (3) const obj1 = JSON.parse(JSON.stringify(obj))  数组，对象都好用的方法(缺点: 不能有undefined)
+
+=== Immutable功能：
+
+> - 因为使用了引用赋值，新的对象简单的引用了原始对象，改变新的对象会影响到原始对象
+> - 但又为了解决这个问题，一般就是使用浅拷贝或者深拷贝来避免被修改，但是这样会造成cpu和内存的浪费
+>
+> - **所以有了Immutable，一旦创建，就不能更改的数据，对immutable对象的任何修改或删除添加都会返回一个新的immutable对象**
+
+=== Immutable优化性能的方式：
+> - Immutable 实现的原理是 Persistent Data Structure(持久化数据结构)，也就是使用旧数据创建新数据时，要保证旧数据同时可用且不变。
+> - 同时为了避免 deepCopy 把所有节点都复制一遍带来的性能损耗，Immutable 使用了 Structural Sharing(结构共享)。
+> - 即如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点， 其它节点则进行共享。
+
+image::[]
+
+=== Immutable中常用类型(Map，List)
+
+> - **(1) `Map` **
+
+```jsx
+  import { Map } from 'immutable'
+  const obj = {name: 'xiaohong',arr:[1,2,3]}
+  const obj1 = Map(obj)
+  const newobj = obj1.set('name','xiaoming')
+  console.log(obj1,newobj)
+  console.log(obj1.get('name'),newobj.get('name'))
+  console.log(newobj.toJS('name'),newobj.toJS('name'))
+```
+
+image::[]
+
+
+> - **案例1(简单数据类型)**
+
+```jsx
+  class ImmutableMap extends Component {
+    state = {
+        info: {
+            name: 'xiaohong',
+            age: 100
+        }
+    }
+    render()
+    {
+        return (
+            <div>
+                <button onClick={()=>{
+                    const oldinfo = Map(this.state.info)
+                    const newinfo = oldinfo.set('name','xiaoming').set('age',18)
+                    this.setState({info:newinfo.toJS()})
+                }}>click</button>
+                {this.state.info.name}---
+                {this.state.info.age}
+            </div>
+        );
+    }
+ }
+```
+
+image::[]
+
+---
+
+> - **案例2(复杂数据类型)**
+
+```jsx
+  class ImmutableMap2 extends Component {
+      state = {
+          info:Map({
+              name: 'xiaohong',
+              age:100,
+              filter:Map({
+                  text: '',
+                  up:true,
+                  down:false
+              })
+          })
+      }
+      componentDidMount(){
+          console.log(this.state.info.get('filter'));
+      }
+      componentDidUpdate(prevProps, prevState, snapshot) {
+          console.log('parent-componentDidUpdate')
+      }
+
+      render()
+      {
+          return (
+              <div>
+                  <button onClick={() =>{
+                      this.setState({info:this.state.info.set('name','xiaoming')})
+                  }}>click</button>
+                  {this.state.info.get('name')}
+                  <Child filter={this.state.info.get('filter')}></Child>
+              </div>
+          );
+      }
+  }
+  class Child extends Component{
+      shouldComponentUpdate(nextProps, nextState, nextContext) {
+          if(this.props.filter === nextProps.filter){
+              return false
+          }
+          return true
+      }
+
+      render(){
+          return (
+              <div>
+                  child
+              </div>
+          )
+      }
+      componentDidUpdate(prevProps, prevState, snapshot) {
+          console.log('Child-componentDidUpdate')
+      }
+  }
+```
+
+image::[]
+
+---
+
+> - **(2) `List` **
+
+```jsx
+  import {List} from "immutable";
+  const arr = List([1,2,3])
+  const arr1 = arr.push(4)
+  const arr2 = arr1.shift(0)
+  const arr3 = arr2.concat(5,6,7)
+  console.log(arr.toJS(),arr1.toJS(),arr2.toJS(),arr3.toJS())
+```
+
+image::[]
+
+
+```jsx
+  class ImmutableList extends Component {
+      state = {
+          favorite:List(['aaa', 'bbb', 'ccc'])
+      }
+      render()
+      {
+          return (
+              <div>
+                  {this.state.favorite.map(item => <li key={item}>{item}</li>)}
+              </div>
+          );
+      }
+  }
+```
+
+image::[]
+
+---
+
+=== 综合运用(个人信息修改)
+
+```jsx
+  class Immutable extends Component {
+      state = {
+          info:Map({
+              name: 'xiaoming',
+              location:Map({
+                  provinces: "beijing",
+                  city:'beijing'
+              }),
+              favorite:List(["读书","看报","写作业"])
+          })
+      }
+      render()
+      {
+          return (
+              <div>
+                  <h1>个人信息修改</h1>
+                  <button onClick={
+                      ()=>{
+                         return this.setState({info:this.state.info.set("name","laowang").
+                             set("location",this.state.info.get("location").set("provinces","shanghai").
+                             set("city","shanghai"))
+                         })
+                      }
+                  }>change</button>
+                  {
+                      this.state.info.get('name')
+                  }
+                  <br/>
+                  {
+                      this.state.info.get('location').get('provinces')
+                  }
+                  -
+                  {
+                      this.state.info.get('location').get('city')
+                  }
+                  {
+                      this.state.info.get('favorite').map((item,index) => <li
+                          key={index}>{item}
+                          <button onClick={
+                              () =>{
+                                  this.setState({info: this.state.info.
+                                      set('favorite',this.state.info.get('favorite').splice(index, 1))
+                                  })
+                              }
+                          }>del</button></li>)
+                  }
+              </div>
+          );
+      }
+  }
+```
+
+image::[]
+
+---
+
+=== 优化(fromJS)
+
+
+```jsx
+  class Immutable extends Component {
+      state = {
+          info:fromJS({
+              name: 'xiaoming',
+              location:{
+                  provinces: "beijing",
+                  city:'beijing'
+              },
+              favorite:["读书","看报","写作业"]
+          })
+      }
+      render()
+      {
+          return (
+              <div>
+                  <h1>个人信息修改</h1>
+                  <button onClick={
+                      ()=>{
+                          return this.setState({info:this.state.info.set("name","laowang").
+                              setIn(["location","provinces"],"shanghai").setIn(["location","city"],"shanghai")
+                      })
+                  }}>change</button>
+                  {
+                      this.state.info.get('name')
+                  }
+                  <br/>
+                  {
+                      this.state.info.get('location').get('provinces')
+                  }
+                  -
+                  {
+                      this.state.info.get('location').get('city')
+                  }
+                  {
+                      this.state.info.get('favorite').map((item,index) => <li
+                          key={index}>{item}
+                          <button onClick={
+                              () =>{
+                                  this.setState({info: this.state.info.
+                                      updateIn(['favorite'],(list)=>list.splice(index,1))
+                                  })
+                              }
+                          }>del</button></li>)
+                  }
+              </div>
+          );
+      }
+  }
+```
+
+image::[]
+
+---
