@@ -1,7 +1,7 @@
 # React 扩展（四）
 
 ## 1. Flux与Redux概念补充:
-=== Flux 是一种架构思想，专门解决软件的结构问题。它跟MVC架构是同一类东西，但是更加简单和 清晰。Flux存在多种实现(至少15种)
+=== Flux 是一种架构思想，专门解决软件的结构问题。它跟MVC架构是同一类东西，但是更加简单和清晰。Flux存在多种实现(至少15种)
 
 === https://github.com/voronianski/flux-comparison[Flux与Redux]
 
@@ -25,7 +25,7 @@
 
 > - **(2) 在store页面中引用 `redux-persist` **
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Redux%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A81.png[Redux持久化存储1]
 
 > - **(3) 改造store **
 
@@ -60,7 +60,7 @@ image::[]
                   document.getElementById('root'))
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Redux%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A82.gif[Redux持久化存储2]
 
 ---
 
@@ -86,7 +86,7 @@ image::[]
 > - 同时为了避免 deepCopy 把所有节点都复制一遍带来的性能损耗，Immutable 使用了 Structural Sharing(结构共享)。
 > - 即如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点， 其它节点则进行共享。
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable1.gif[Immutable1]
 
 === Immutable中常用类型(Map，List)
 
@@ -102,7 +102,7 @@ image::[]
   console.log(newobj.toJS('name'),newobj.toJS('name'))
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable2.png[Immutable2]
 
 
 > - **案例1(简单数据类型)**
@@ -132,7 +132,7 @@ image::[]
  }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable3.gif[Immutable3]
 
 ---
 
@@ -192,7 +192,7 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable4.gif[Immutable4]
 
 ---
 
@@ -207,7 +207,7 @@ image::[]
   console.log(arr.toJS(),arr1.toJS(),arr2.toJS(),arr3.toJS())
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable_List.png[Immutable_List]
 
 
 ```jsx
@@ -226,7 +226,7 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable_List2.png[Immutable_List2]
 
 ---
 
@@ -285,7 +285,7 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable_%E7%BB%BC%E5%90%881.gif[Immutable_综合1]
 
 ---
 
@@ -343,6 +343,6 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%9B%9B/Immutable_%E7%BB%BC%E5%90%882.gif[Immutable_综合2]
 
 ---
