@@ -34,25 +34,26 @@ image::[]
 
 > - **(1) `npm install mobx --save` **
 
+---
+
 > - **(2) `observable` 与 `autorun` **
 
-> - observable
-MobX 为现有的数据结构(如对象，数组和类实例)添加了可观察的功能。 通过使用 @observable 装饰器(ES.Next)来给你的类属性添加注解就可以简单地完成这一切。
-使用 observable 很像把对象的属性变成excel的单元格。 但和单元格不同的是，这些值不只是原始值，还可以是引用值，比如对象和数组
-API 只有在它可以被制作成可观察的数据结构(数组、映射或 observable 对象)时才会成功。对于所有其他值，不会执行转换。
-Observable 值可以是JS基本数据类型、引用类型、普通对象、类实例、数组和映射。
+=== observable
 
-> - autorun
-使用 autorun 时，所提供的函数总是立即被触发一次，然后每次它的依赖关系改变时会再次被触发
+> - ->MobX 为现有的数据结构(如对象，数组和类实例)添加了可观察的功能，observable API 只有在它可以被制作成可观察的数据结构时才会成功。其他值，不会执行转换。
+> - ->使用 observable 很像把对象的属性变成excel的单元格。 但和单元格不同的是，这些值不只是原始值，还可以是引用值，比如对象和数组
+> - ->observable 值可以是JS基本数据类型、引用类型、普通对象、类实例、数组和映射。
+>
 
-observable.box(value, options?)
-创建一个 observable 的盒子，它用来存储value的 observable 引用。使用 get() 方法可以得到盒子中的当前value，而使用 set() 方法可以更新value。 这是所有其它 observable 创建的基础，但实际中你其实很少能使用到它。
+=== autorun
 
-通常盒子会自动地尝试把任何还不是 observable 的新值转换成 observable 。使用 {deep: false} 选项会禁用这项行为。
+> - -> 使用 autorun 时，所提供的函数总是立即被触发一次，然后每次它的依赖关系改变时会再次被触发
+
 
 ```jsx
   import { observable , autorun } from 'mobx'
 ```
+- -> `observable.box` 创建一个 observable 的盒子，它用来存储value的 observable 引用。使用 get() 方法可以得到盒子中的当前value，而使用 set() 方法可以更新value。
 
 ```jsx
   //---------------------------------------
@@ -74,20 +75,24 @@ observable.box(value, options?)
 
 image::[]
 
-> - **(2) `action` , `runInAction` 与 `严格模式` **
+---
+
+> - **(3) `action` , `runInAction` 与 `严格模式` **
 
 ```jsx
   import {observable, configure, action,runInAction} from 'mobx'
 ```
 
-configure
-用法: configure(options) 。 对活动的 MobX 实例进行全局行为设置。 使用它来改变 MobX 的整体表现。
+=== configure
+> - -> 用法: `configure(options)` 。 对活动的 MobX 实例进行全局行为设置。
 
 ```jsx
   configure({                   //严格模式， 必须写action
     enforceActions:'always'     //如果是never，可以不写action
   })                            //最好设置always, 防止任意地方修改值， 降低不确定性
 ```
+
+
 
 > - **案例(加减)**
 
@@ -150,11 +155,12 @@ image::[]
 
 > - (1) react 组件里使用 @observer
 
-> -- observer 函数/装饰器可以用来将 React 组件转变成响应式组件。
+> - -> `observer` 函数/装饰器可以用来将 React 组件转变成响应式组件。
 
 > - (2) 可观察的局部组件状态
 
-> -- @observable 装饰器在React组件上引入可观察属性。而不需要通过 React 的冗长和强制性的 setState 机制来管 理。
+> - -> `@observable` 装饰器在React组件上引入可观察属性。而不需要通过 React 的冗长和强制性的 setState 机制来管理。
+
 
 === 装饰器安装与配置
 
@@ -224,24 +230,7 @@ image::[]
 
 ---
 
-observable & observer
-
-如果你用 React 的话，可以把你的(无状态函数)组件变成响应式组件，方法是在组件上添加 observer 函数/ 装饰器. observer由 mobx-react 包提供的。
-
-
-runInAction 工具函数
-内联动作的缺点是 TypeScript 无法对其进行类型推导，所以你应该为所有的回调函数定义类型。 
-你还可以只在动作中运行回调函数中状态修改的部分，而不是为整个回调创建一个动作。 这种模式的优势是它鼓励你不要到处写 action，而是在整个过程结束时尽可能多地对所有状态进行修改
-
-
-action (动作)
-任何应用都有动作。动作是任何用来修改状态的东西。 使用MobX你可以在代码中显式地标记出动作所在的位置。 动作可以有助于更好的组织代码。
-
-inject (mobx-react 包)
-相当于Provider 的高阶组件。可以用来从 React 的context中挑选 store 作为 prop 传递给目标组件。
-
-observer
-可以用作包裹 React 组件的高阶组件。 在组件的 render 函数中的任何已使用的 observable 发生变化时，组件都会自动重新渲染。 注意 observer 是由 "mobx-react" 包提供的，而不是 mobx 本身。
+=== mobx-react的使用
 
 ```jsx
   //store.jsx
@@ -255,6 +244,15 @@ observer
 ```
 
 > - **案例(加减)**
+
+=== action (动作)
+
+> - -> 任何应用都有动作。动作是任何用来修改状态的东西。 使用MobX可以在代码中显式地标记出动作所在的位置。 有助于更好的组织代码。
+
+=== runInAction 工具函数
+
+> - -> 非严格模式下，store数据操作可以不用runInAction包裹。
+> - -> 严格模式下，异步数据操作需要用runInAction包裹。
 
 ```jsx
   //store.jsx
@@ -278,6 +276,14 @@ observer
   const store = new Store()
 ```
 
+=== inject (mobx-react 包)
+
+> - -> 相当于Provider 的高阶组件。可以用来从 React 的context中挑选 store 作为 prop 传递给目标组件。
+
+=== observer
+
+> - -> 可以用作包裹 React 组件的高阶组件。 在组件的 render 函数中的任何已使用的 observable 发生变化时，组件都会自动重新渲染。 
+
 ```jsx
   //App.jsx
   @inject('store')
@@ -298,3 +304,6 @@ observer
 ```
 
 image::[]
+
+
+---
