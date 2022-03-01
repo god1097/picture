@@ -1,6 +1,6 @@
 # React 扩展(五)
 
-## 1. MobX:
+##  MobX:
 
 === https://cn.mobx.js.org/[MobX文档]
 
