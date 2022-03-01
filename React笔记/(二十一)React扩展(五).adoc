@@ -120,7 +120,7 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
           }
       },
       asyncAdd:action(function(){
-          setTimeout(() =>runInAction(()=>this.count++),1000)
+          setTimeout(() =>runInAction(()=>store.count++),1000)
       })
   },{
       add:action,
@@ -143,7 +143,7 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
       render() {
           return (
               <div>
-                  <h2>当前和为:{store.count}</h2>
+                  <h2>当前和为:{this.state.count}</h2>
                   <button onClick={()=> store.add()}>+1</button>
                   <button onClick={()=> store.minus()}>-1</button>
                   <button onClick={()=> store.addof()}>奇数+</button>
