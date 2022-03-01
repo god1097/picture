@@ -120,7 +120,7 @@ image::[]
           }
       },
       asyncAdd:action(function(){
-          setTimeout(() =>store.add(),1000)
+          setTimeout(() =>runInAction(()=>this.count++),1000)
       })
   },{
       add:action,
