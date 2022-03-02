@@ -1,0 +1,799 @@
+# React 扩展(六)
+
+##  TypeScript:
+
+=== https://zhongsp.gitbooks.io/typescript-handbook/content/[TypeScript文档]
+
+> - (1) TypeScript 的定位是静态类型语言，在写代码阶段就能检查错误，而非运行阶段
+> - (2) 类型系统是最好的文档，增加了代码的可读性和可维护性。
+> - (3) 有一定的学习成本，需要理解接口(Interfaces)、泛型(Generics)、类(Classes)等 
+> - (4) ts最后被编译成js
+
+## TypeScript与React结合使用:
+
+=== 1.脚手架安装
+
+```tsx
+  create-react-app `项目名称` --template typescript
+```
+
+image::[]
+
+=== 2.TS基础
+
+> - **2.1** **基本类型**
+
+
+```tsx
+  // String Number Boolean
+  var name: string = '小明'
+  name.substring(0,1)
+  name = String(100)
+  //
+  var age: number = 100
+  age.toFixed(1)
+  //
+  var isShow:boolean = true
+  isShow = false
+  //
+  var my:string | number  = '老王'
+  my = 100
+  //
+  var myany:any  = 100
+  myany = '小红'
+```
+
+> - **2.2** **数组**
+
+```tsx
+  var list1:string[] = ["1",'2','3','4','5']
+  list1.push("6")
+  //
+  var list2:number[] = [1,2,3,4,5]
+  list2.push(6)
+  //
+  var list3:(string|number)[] = [1,2,3,4,"5"]
+  list3.push(6,"7")
+  //
+  var list4:any[] = [true,2,3,4,"5"]
+  list4.push(6,"7",false)
+  //
+  //--------------------------------------------
+  //
+  var mylist1:Array<string> = ["1",'2','3','4','5']
+  mylist1.push("6")
+  //
+  var mylist2:Array<number> = [1,2,3,4,5]
+  mylist2.push(6)
+  //
+  var mylist3:Array<string|number> = [1,2,3,4,'5']
+  mylist3.push(6,"7")
+  //
+  var mylist4:Array<any> = [false,true,1,2,3,"4"]
+  mylist4.push(5,6,"7",false)
+```
+
+> - **2.3** **对象**
+
+```tsx
+  // Object
+  interface Iobj{
+      name: string,
+      age:number,
+      location:string,
+      [propName:string]:any
+  }
+  var obj:Iobj = {
+      name: "jack",
+      age:100,
+      location: "beijing",
+      cc:'212',
+      ww:1,
+      ss:true
+  }
+```
+
+> - **2.4** **函数**
+
+
+```tsx
+  function test1(a:string, b:string,c?:number):string {
+      return a.substring(0,1)+b.substring(0,1)
+  }
+  var myname:string = test1('aaa', 'bbb', 100)
+  console.log(myname)
+  //------------------------
+  interface Ifunc{
+      (a:string, b:string):string
+  }
+  var myfunc:Ifunc = function test2(a:string, b:string,c?:number):string {
+      return a.substring(0,1)+b.substring(0,1)
+  }
+
+  interface Iobj{
+      name: string,
+      age: number,
+      getName:(name:string) => string
+  }
+  var obj:Iobj = {
+      name: "李四",
+      age: 100,
+      getName:(name:string)=>{
+          return name
+      }
+  }
+
+  var name:string = obj.getName('aaa')
+```
+
+
+> - **2.5** **类**
+
+
+```tsx
+  class test{
+      public name:string  = '张三'
+      private _list:any = []
+      protected _age:number = 100
+      public subscribe(cb:any){
+          this._list.push(cb)
+      }
+      public dispatch(){
+          this._list.forEach((cb:any) => {
+              cb&&cb()
+          })
+      }
+  }
+  //
+  class test1 extends test{
+      aaa(){
+          console.log(this._age,this.name)
+      }
+  }
+
+  var obj = new test()
+  console.log(obj.name)
+```
+
+
+> - **2.6** **类+接口**
+
+```tsx
+  interface Ifunc{
+      getName:()=>string
+  }
+  class A implements Ifunc{
+      getName(): string {
+          return "A";
+      }
+      A(){
+      }
+  }
+  class B implements Ifunc{
+      getName(): string {
+          return "B";
+      }
+      B(){
+      }
+  }
+
+  function init(obj:Ifunc){
+      obj.getName()
+  }
+  const objA = new A()
+  const objB = new B()
+  init(objA)
+  init(objB)
+```
+
+---
+
+=== 3.TS类组件
+
+> - **3.1** **类-State**
+
+
+```tsx
+  interface IState {
+      name: string
+  }
+  class App extends Component<any, IState> {
+      state = {
+          name: 'xiaohong'
+      }
+      render()
+      {
+          return (
+              <div>
+                  {this.state.name.substring(0,1).toUpperCase()+this.state.name.substring(1)}
+                  <button onClick={() => this.setState({
+                      name: 'xiaoming'
+                  })}>Change-Name</button>
+              </div>
+          );
+      }
+  }
+```
+
+image::[]
+
+> - **3.2** **类-ToDoList**
+
+```tsx
+  interface IState{
+      text: string
+      list: string[]
+  }
+  class Todolist extends Component<any,IState> {
+      state = {
+          text:'',
+          list: []
+      }
+      myref = React.createRef<HTMLInputElement>()
+      render()
+      {
+          return (
+              <div>
+                  {/*<input type="text" value={this.state.text} onChange={(event)=>*/}
+                  {/*    this.setState({text: event.target.value*/}
+                  {/*})}/>*/}
+                  <input type="text" ref={this.myref} />
+                  {/*<button onClick={() =>{*/}
+                  {/*    this.setState({list:[...this.state.list,this.state.text]})*/}
+                  {/*    this.setState({text: ''})*/}
+                  {/*}}>Add</button>*/}
+                  <button onClick={() =>{
+                      this.setState({list:[...this.state.list,(this.myref.current as HTMLInputElement).value]});
+                      (this.myref.current as HTMLInputElement).value = ''
+                  }}>Add</button>
+                  <ul>
+                  {this.state.list.map((item,index) => <li key={index}>{item}
+                  <button onClick={() => {
+                      const newlist = [...this.state.list]
+                      newlist.splice(index,1)
+                      this.setState({list:newlist})
+                  }}>Delete</button>
+                  </li>)}
+                  </ul>
+              </div>
+          )
+      }
+  }
+```
+
+image::[]
+
+> - **3.3** **类-Props**
+
+```tsx
+  interface IProp{
+      name: string
+  }
+  class Prop extends Component {
+      render()
+      {
+          return (
+              <div>
+                  <Child name='aaa'></Child>
+              </div>
+          )
+      }
+  }
+  class Child extends Component<IProp,any> {
+      render(){
+          return <div>
+              Child-{this.props.name}
+          </div>
+      }
+  }
+```
+image::[]
+
+> - **3.4** **类-案例**
+
+```tsx
+  interface IProp {
+      title: string
+      callback: ()=>void
+  }
+  class App extends Component {
+      state = {
+          isShow: true
+      }
+      render()
+      {
+          return (
+              <div>
+                  <Navbar title='首页' callback={()=>{this.setState({isShow:!this.state.isShow})}}></Navbar>
+                  {this.state.isShow && <Sidebar></Sidebar>}
+              </div>
+          );
+      }
+  }
+  class Navbar extends Component<IProp,any> {
+      render() {
+          return <div>
+              Navbar-{this.props.title}
+              <button onClick={() =>this.props.callback()}>Show</button>
+          </div>
+      }
+  }
+  class Sidebar extends Component {
+      render() {
+          return <div>
+              Sidebar
+          </div>
+      }
+  }
+```
+
+image::[]
+
+
+---
+
+=== 4.TS函数式组件
+
+> - **4.1** **函数式-State**
+
+```tsx
+  const MyComponent = () => {
+      const [name, setname] = useState<string>('xiaohong');
+      return (
+          <div>
+              {name.substring(0,1).toUpperCase()+name.substring(1)}
+              <button onClick={() => setname('xiaoming')}>Change-Name</button>
+          </div>
+      )
+  }
+```
+image::[]
+
+> - **4.2** **函数式-ToDoList**
+
+```jsx
+  const MyComponent = () => {
+      const myref = useRef<HTMLInputElement>(null)
+      const [list, setList] = useState<string[]>([])
+      return (
+          <div>
+              <input type="text" ref={myref}/>
+              <button onClick={() =>{
+                  setList([...list,(myref.current as HTMLInputElement).value]);
+                  (myref.current as HTMLInputElement).value = ''
+              }}>Add</button>
+              <ul>
+                  {
+                      list.map((item,index) => {
+                        return  <li key={index}>{item}</li>
+                      })
+                  }
+              </ul>
+          </div>
+      )
+  }
+```
+
+image::[]
+
+
+> - **4.3** **函数式-Props**
+
+
+```tsx
+  interface IProp{
+      name: string
+  }
+  const MyComponent = () => {
+      return (
+          <div>
+              <Child name='aaa'></Child>
+          </div>
+      );
+  };
+  // const Child = (props: IProp) => {
+  //     return (
+  //         <div>
+  //             Child-{props.name}
+  //         </div>
+  //     )
+  // }
+  const Child:React.FC<IProp> = (props) => {
+      return (
+          <div>
+              Child-{props.name}
+          </div>
+      )
+  }
+```
+
+image::[]
+
+> - **4.4** **函数式-案例**
+
+```tsx
+  interface IProp{
+      title?: string
+      callback:()=>void
+  }
+  const MyComponent = () => {
+      const [isShow, setIsShow] = useState(true);
+      return (
+          <div>
+              <Navbar callback={() => {setIsShow(!isShow)}}/>
+              {isShow && <Sidebar/>}
+          </div>
+      )
+  }
+  const Navbar = (props:IProp) => {
+      return (
+          <div>
+              Navbar
+              <button onClick={() =>{
+                  props.callback()
+              }}>isShow</button>
+          </div>
+      )
+  }
+  const Sidebar = () => {
+      return (
+          <div>
+              Sidebar
+          </div>
+      )
+  }
+```
+
+image::[]
+
+---
+
+=== 5.TS路由
+
+image::[]
+
+> - **5** **TS路由-案例(V6)**
+
+- `react-router` **v6** 不再使用RouteComponentProps
+
+```tsx
+  //App.tsx
+  class App extends Component {
+      render() {
+          return (
+              <BrowserRouter>
+              <div>
+                  <Routes>
+                      <Route path="/film/*" element={<Film></Film>}></Route>
+                      <Route path="/cinema" element={<Cinema></Cinema>}></Route>
+                      <Route path="/center" element={<Center/>}></Route>
+                      <Route path="/detail/:id" element={<Detail/>}></Route>
+                      <Route path="*" element={<Navigate to="/film" />}></Route>
+                  </Routes>
+              </div>
+              </BrowserRouter>
+          )
+      }
+  }
+```
+
+```tsx
+  //File.tsx
+  interface Iitem{
+      filmId:number;
+      name:string;
+  }
+  const Film:React.FC<{}> = () => {
+      const [list, setList] = useState([]);
+      useEffect(() =>{
+              axios({
+                  url:'https://m.maizuo.com/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=4624488',
+                  method:'GET',
+                  headers: {
+                      'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"110100"}',
+                      'X-Host': 'mall.film-ticket.film.list'
+                  }
+              }).then(response => setList(response.data.data.films));
+      },[])
+      return (
+          <div>
+              <h2>Film</h2>
+              <ul>
+                  {
+                      list.map((item:Iitem) =>{
+                          return <li key={item.filmId}>
+                              <Link to={`/detail/${item.filmId}`}>{item.name}</Link>
+                          </li>;
+                      })
+                  }
+              </ul>
+          </div>
+      )
+  }
+```
+
+---
+
+=== 6.TS-Redux
+
+image::[]
+
+> - **6** **TS-Redux-案例(V6)**
+
+```tsx
+  //App.tsx
+  class App extends Component {
+      state = {
+          isShow:store.getState().isShow
+      }
+      componentDidMount() {
+          store.subscribe(() => {
+              this.setState({isShow:store.getState().isShow});
+          })
+      }
+      render() {
+          return (
+              <BrowserRouter>
+              <div>
+                  <Routes>
+                      <Route path="/film/*" element={<Film></Film>}></Route>
+                      <Route path="/cinema" element={<Cinema></Cinema>}></Route>
+                      <Route path="/center" element={<Center/>}></Route>
+                      <Route path="/detail/:id" element={<Detail/>}></Route>
+                      <Route path="*" element={<Navigate to="/film" />}></Route>
+                  </Routes>
+                  {
+                      this.state.isShow && <ul>
+                          <li>电影</li>
+                          <li>影院</li>
+                          <li>我的</li>
+                      </ul>
+                  }
+              </div>
+              </BrowserRouter>
+          )
+      }
+  }
+```
+
+```tsx
+  //store.tsx
+  interface IAction{
+      type: string
+      data?: any
+  }
+  interface IState{
+      isShow:boolean
+  }
+  const initState  = {
+      isShow: true
+  }
+  const reducer = (preState:IState=initState,action:IAction) => {
+      const {type} = action;
+      const newState = {...preState}
+      switch (type) {
+          case "show":
+              newState.isShow = true
+              return newState
+          case "hide":
+              newState.isShow = false
+              return newState
+          default:
+              return preState
+      }
+  }
+
+  const store = createStore(reducer)
+  export default store
+```
+
+```tsx
+  //Film.tsx
+  interface Iitem{
+      filmId:number;
+      name:string;
+  }
+  const Film: React.FC<{}> = () => {
+      const [list, setList] = useState([]);
+      useEffect(() =>{
+              axios({
+                  url:'https://m.maizuo.com/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=4624488',
+                  method:'GET',
+                  headers: {
+                      'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"110100"}',
+                      'X-Host': 'mall.film-ticket.film.list'
+                  }
+              }).then(response => setList(response.data.data.films));
+      },[])
+      return (
+          <div>
+              <h2>Film</h2>
+              <ul>
+                  {
+                      list.map((item:Iitem) =>{
+                          return <li key={item.filmId}>
+                              <Link to={`/detail/${item.filmId}`}>{item.name}</Link>
+                          </li>;
+                      })
+                  }
+              </ul>
+          </div>
+      )
+ }
+```
+
+```tsx
+  //Detail.tsx
+  const Detail: React.FC<{}> = () => {
+      useEffect(() => {
+          store.dispatch({
+              type: 'hide'
+          })
+              return () => {store.dispatch({
+                  type: 'show'
+              })}
+      },[])
+      const {id} = useParams()
+      return (
+          <div>
+              <h2>Detail</h2>
+              <h3>当前电影ID为:{id}</h3>
+          </div>
+      )
+  }
+```
+
+---
+
+=== 7.TS-组件库
+
+image::[]
+
+> - **7** **TS-组件库-案例(V6)**
+
+```tsx
+  //App.tsx
+  class App extends Component {
+      state = {
+          isShow:store.getState().isShow
+      }
+      componentDidMount() {
+          store.subscribe(() => {
+              this.setState({isShow:store.getState().isShow});
+          })
+      }
+      render() {
+          return (
+              <BrowserRouter>
+              <div>
+                  <Routes>
+                      <Route path="/film/*" element={<Film></Film>}></Route>
+                      <Route path="/cinema" element={<Cinema></Cinema>}></Route>
+                      <Route path="/center" element={<Center/>}></Route>
+                      <Route path="/detail/:id" element={<Detail/>}></Route>
+                      <Route path="*" element={<Navigate to="/film" />}></Route>
+                  </Routes>
+                  {
+                      this.state.isShow && <ul>
+                          <li>电影</li>
+                          <li>影院</li>
+                          <li>我的</li>
+                      </ul>
+                  }
+              </div>
+              </BrowserRouter>
+          )
+      }
+  }
+```
+
+```tsx
+  //store.tsx
+  interface IAction{
+      type: string
+      data?: any
+  }
+  interface IState{
+      isShow:boolean
+  }
+  const initState  = {
+      isShow: true
+  }
+  const reducer = (preState:IState=initState,action:IAction) => {
+      const {type} = action;
+      const newState = {...preState}
+      switch (type) {
+          case "show":
+              newState.isShow = true
+              return newState
+          case "hide":
+              newState.isShow = false
+              return newState
+          default:
+              return preState
+      }
+  }
+  const store = createStore(reducer)
+```
+
+```tsx
+  //Film.tsx
+  interface Iitem{
+      filmId:number
+      name:string
+  }
+  const Film: React.FC<{}> = () => {
+      const [list, setList] = useState([]);
+      const [showlist, setShowlist] = useState([]);
+      const myref = useRef<SwiperRef>(null)
+      useEffect(() =>{
+              axios({
+                  url:'https://m.maizuo.com/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=4624488',
+                  method:'GET',
+                  headers: {
+                      'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"110100"}',
+                      'X-Host': 'mall.film-ticket.film.list'
+                  }
+              }).then(response => setList(response.data.data.films))
+              axios({
+                  url:'https://m.maizuo.com/gateway?type=2&cityId=110100&k=9768132',
+                  method:'GET',
+                  headers:{
+                      'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"110100"}',
+                      'X-Host': 'mall.cfg.common-banner'
+                  }
+              }).then(response=> setShowlist(response.data.data))
+      },[])
+      return (
+          <div>
+              <h2>Film</h2>
+              <Swiper ref={myref} loop autoplay >
+                      {
+                          showlist.map((item:any) =>{
+                              return <Swiper.Item key={item.bannerId}>
+                                  <img src={item.imgUrl} style={{width:"100%"}} alt={item.name}/></Swiper.Item>
+                          })
+                      }
+              </Swiper>
+              <Button color="danger" onClick={() => {
+                  myref.current?.swipePrev()
+              }}>上一个</Button>
+              <Button color="primary" onClick={() => {
+                  myref.current?.swipeNext()
+              }}>下一个</Button>
+              <ul>
+                  {
+                      list.map((item:Iitem) =>{
+                          return <li key={item.filmId}>
+                              <Link to={`/detail/${item.filmId}`}>{item.name}</Link>
+                          </li>;
+                      })
+                  }
+              </ul>
+          </div>
+      )
+  }
+```
+
+```tsx
+  //Detail.tsx
+  const Detail: React.FC<{}> = () => {
+      useEffect(() => {
+          store.dispatch({
+              type: 'hide'
+          })
+              return () => {store.dispatch({
+                  type: 'show'
+              })}
+      },[])
+      const {id} = useParams()
+      return (
+          <div>
+              <h2>Detail</h2>
+              <h3>当前电影ID为:{id}</h3>
+          </div>
+      )
+  }
+```
+
+---
