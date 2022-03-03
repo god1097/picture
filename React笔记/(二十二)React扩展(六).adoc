@@ -221,7 +221,7 @@
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/3.1.gif[3.1]
 
 > - **3.2** **类-ToDoList**
 
@@ -267,7 +267,7 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/3.2.gif[3.2]
 
 > - **3.3** **类-Props**
 
@@ -293,7 +293,7 @@ image::[]
       }
   }
 ```
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/3.3.png[3.3]
 
 > - **3.4** **类-案例**
 
@@ -333,7 +333,7 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/3.4.gif[3.4]
 
 
 ---
@@ -353,7 +353,7 @@ image::[]
       )
   }
 ```
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/4.1.gif[4.1]
 
 > - **4.2** **函数式-ToDoList**
 
@@ -380,7 +380,7 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/4.2.gif[4.2]
 
 
 > - **4.3** **函数式-Props**
@@ -413,7 +413,7 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/4.3.png[4.3]
 
 > - **4.4** **函数式-案例**
 
@@ -450,13 +450,13 @@ image::[]
   }
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/4.4.gif[4.4]
 
 ---
 
 === 5.TS路由
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/5.gif[5]
 
 > - **5** **TS路由-案例(V6)**
 - `v5版` 路由可引入 `RouteComponentProps` 接口配置
@@ -523,7 +523,7 @@ image::[]
 
 === 6.TS-Redux
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/6.gif[6]
 
 > - **6** **TS-Redux-案例(V6)**
 
@@ -654,7 +654,7 @@ image::[]
 
 === 7.TS-组件库
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E5%85%AD/7.gif[7]
 
 > - **7** **TS-组件库-案例(V6)**
 
