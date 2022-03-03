@@ -16,8 +16,14 @@
 ```tsx
   create-react-app `项目名称` --template typescript
 ```
+=== 1.1 声明文件
 
-image::[]
+```tsx
+  npm i --save @types/{依赖包名称} //编译器需要通过这个声明文件，进行类型检查工作
+  //@types是npm的一个分支，用来存放*.d.ts文件
+  //有些依赖包例如 `axios` 不需要再安装声明文件，因为声明文件已经在依赖包根目录中
+```
+
 
 === 2.TS基础
 
@@ -81,7 +87,7 @@ image::[]
       name: string,
       age:number,
       location:string,
-      [propName:string]:any
+      [propName:string]:any  //任意属性
   }
   var obj:Iobj = {
       name: "jack",
@@ -244,7 +250,7 @@ image::[]
                   {/*}}>Add</button>*/}
                   <button onClick={() =>{
                       this.setState({list:[...this.state.list,(this.myref.current as HTMLInputElement).value]});
-                      (this.myref.current as HTMLInputElement).value = ''
+                      (this.myref.current as HTMLInputElement).value = ''        //类型断言as
                   }}>Add</button>
                   <ul>
                   {this.state.list.map((item,index) => <li key={index}>{item}
@@ -453,8 +459,9 @@ image::[]
 image::[]
 
 > - **5** **TS路由-案例(V6)**
-
-- `react-router` **v6** 不再使用RouteComponentProps
+- `v5版` 路由可引入 `RouteComponentProps` 接口配置
+- `RouteComponentProps` 是一个泛型接口
+- `react-router` **v6** 不再使用 `RouteComponentProps`
 
 ```tsx
   //App.tsx
