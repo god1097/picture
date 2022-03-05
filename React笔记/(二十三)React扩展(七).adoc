@@ -1,0 +1,355 @@
+# React 扩展(七)
+
+##  styled-components:
+
+=== https://github.com/styled-components/styled-components[styled-components仓库]
+
+> - (1) styled-components 样式化组件，主要作用是它可以编写实际的CSS代码来设计组件样式，也不需要组件和样式之间的映射，即创建后就是一个正常的React组件，并且可以附加样式给当前组件。优化react组件
+> - (2) 在一个组件内会将结构、样式和逻辑写在一起，虽然这违背了关注点分离的原则，但是这有利于组件间的隔离。为了顺应组件化的潮流
+> - (3) 使用styled-components不需要再使用className属性来控制样式，而是将样式写成更具语义化的组件的形式
+> - (4) 使用style-components会随机生成一个class名称，这样不会污染到全局变量，当然因为随机生成，维护会增加难度
+> - (5) 贯彻React的 everything in JS理念，降低js对css文件的依赖
+
+
+=== styled-components的使用: 
+
+> - **(1) 安装依赖 `npm i styled-components` **
+>
+> - **(2) 引入 `import styled from 'styled-components'` **
+>
+> - **(3) 基本使用 **
+
+```jsx
+  class App extends Component {
+      render() {
+          const StyledFooter = styled.footer`
+                background-color:skyblue;
+                position:fixed;
+                left:0;
+                bottom:0;
+                width:100%;
+                height:50px;
+                line-height:50px;
+                text-align:center;
+                ul {
+                  display:flex;
+                  li{
+                    flex:1;
+                    &:hover{
+                      background:pink;
+                    }
+                  }
+                }
+      `
+          return (
+              <div>
+                  <StyledFooter>
+                  <ul>
+                      <li>首页</li>
+                      <li>列表</li>
+                      <li>我的</li>
+                  </ul>
+                  </StyledFooter>
+              </div>
+          )
+      }
+  }
+```
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%20styled-components01.gif[styled-components01]
+
+> - **(4) 透传props **
+
+```jsx
+  class App extends Component {
+      render() {
+          const StyledInput = styled.input`
+            outline:none;
+            border-radius:10px;
+            border-bottom: 1px solid yellow;
+          `
+          const StyledDiv = styled.div`
+            background:${props=>props.bg || 'gray'};
+            width:100px;
+            height:100px;
+          `
+          return (
+              <div>
+                  <StyledInput type="text" placeholder="输入" />
+                  <StyledDiv bg='red'></StyledDiv>
+              </div>
+          );
+      }
+  }
+```
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E9%80%8F%E4%BC%A0props.png[透传props]
+
+> - **(5) 样式化组件 **
+
+```jsx
+  class App extends Component {
+      render()
+      {
+          const StyledChild = styled(Child)`
+            background:yellow;
+            color:red;
+          `
+          return (
+              <div>
+                  <StyledChild></StyledChild>
+              </div>
+          )
+      }
+  }
+  function Child(props) {
+      return(
+          <div className={props.className}>
+              Child
+          </div>
+      )
+}
+```
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E6%A0%B7%E5%BC%8F%E5%8C%96%E7%BB%84%E4%BB%B6.png[样式化组件]
+
+
+> - **(6) 扩展样式 **
+
+```jsx
+  class App extends Component {
+      render() {
+          const StyledButton = styled.button`
+            width:100px;
+            height:100px;
+            background:red
+          `
+          const StyledButton2 = styled(StyledButton)`
+              background:green;
+          `
+          return (
+              <div>
+                  <StyledButton></StyledButton>
+                  <StyledButton2></StyledButton2>
+              </div>
+          )
+      }
+  }
+```
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E6%89%A9%E5%B1%95%E6%A0%B7%E5%BC%8F.png[扩展样式]
+
+> - **(7) 动画 **
+
+```jsx
+  class App extends Component {
+      render() {
+          const myanimation = keyframes`
+            from {
+              transform:rotate(0deg);
+            }
+            to {
+              transform:rotate(360deg);
+            }
+          `
+          const StyledDiv = styled.div`
+            width:100px; height:100px;
+            background:red;
+            margin: -50px 0 0 -50px;
+            position:absolute;
+            left:50%; top:50%;
+            animation: ${myanimation} 0.1s infinite
+          `
+          return (
+              <div>
+                  <StyledDiv></StyledDiv>
+              </div>
+          )
+      }
+  }
+```
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E5%8A%A8%E7%94%BB.gif[动画]
+
+---
+
+## React-单元测试: 
+
+> - **一个完整、优秀的项目往往离不开单元测试的环节**
+> 
+> - **单元测试是定义我们构建的组件必须实现哪些功能的很好方式。它允许我们尽可能粒子化地测试我们组件的结构**
+
+> - -> `被测试例-ToDoList`
+
+```jsx
+  class App extends Component {
+      state = {
+          text: '',
+          list: ['1','2','3','4','5']
+      }
+      render() {
+          return (
+              <div>
+                  <h2>ToDoList</h2>
+                  <input type="text" onChange={(event)=>{
+                      this.setState({text: event.target.value})
+                  }} />
+                  <button onClick={()=>{
+                      this.setState({list: [...this.state.list,this.state.text]})
+                  }} className='add'>Add</button>
+                  {
+                      this.state.list.map((item, index) =>{
+                          return <li key={index}>{item}<button onClick={()=>{
+                              const newlist = [...this.state.list]
+                              newlist.splice(index, 1)
+                              this.setState({list: newlist})
+                          }
+                          } className='del'>Delete</button>
+                          </li>
+                      })
+                  }
+              </div>
+          )
+      }
+  }
+```
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%9501.gif[单元测试01]
+
+=== 创建测试文件
+
+> - 测试文件通常以 `.test.js` 后缀结尾
+
+=== `npm test` 开启测试
+
+- **官方测试工具库(浅渲染)**
+
+==== 浅渲染
+
+> - 将一个组件渲染成虚拟DOM对象，但是只渲染第一层，不渲染所有子组件，所以处理速度非常快。它不需要DOM环境，因为根本没有加载进DOM
+
+==== 测试顺序
+
+> - 测试脚本里面应该包括一个或多个describe块，每个describe块应该包括一个或多个it块
+> - describe块称为"测试套件"（test suite），表示一组相关的测试。它是一个函数，第一个参数是测试套件的名称，第二个参数是一个实际执行的函数
+> - it块称为"测试用例"（test case），表示一个单独的测试，是测试的最小单位。它也是一个函数，第一个参数是测试用例的名称，第二个参数是一个实际执行的函数
+> - expect断言的写法都是一样的。头部是expect方法，尾部是断言方法，比如equal、a/an、ok、match等。两者之间使用to或to.be连接
+
+
+
+**引入依赖**
+
+```jsx
+  import ShallowRender from 'react-test-renderer/shallow'
+  import ReactTestUtil from 'react-dom/test-utils'
+```
+
+
+**测试脚本*
+
+```jsx
+  describe('react-test-render',function(){
+      it('NAME-TEST',function(){
+          const render = new ShallowRender()       //表示对App组件进行"浅渲染"
+          render.render(<App/>)   //获取 render 的结果
+          console.log(render.getRenderOutput().props.children[0].props) //每一个虚拟DOM对象都有props.children属性，它包含一个数组，里面是所有的子组件
+          expect(render.getRenderOutput().props.children[0].type).toBe('h2'); //props.children[0]就是第一个子组件
+          expect(render.getRenderOutput().props.children[0].props.children).toBe('ToDoList')
+      })
+      it('DELETE-TEST',function (){
+          const app = ReactTestUtil.renderIntoDocument(<App/>)//把一个 React 组件 render 到一个 detached(独立的) 的 DOM 中，该方法会返回被 render 的 React 组件的实例。
+          const todoitems=  ReactTestUtil.scryRenderedDOMComponentsWithTag(app,'li') //scryRenderedDOMComponentsWithTag：找出所有匹配指定标签的节点
+          const deletebutton = todoitems[0].querySelector('button')
+          ReactTestUtil.Simulate.click(deletebutton)          //模拟在给定的 DOM 节点上触发特点事件。Simulate 可以触发所有 React 支持的事件类型
+          const todoitemsAfterDelete = ReactTestUtil.scryRenderedDOMComponentsWithTag(app,'li')
+          expect(todoitems.length-1).toBe(todoitemsAfterDelete.length)
+      })
+      it('ADD-TEST',function (){
+          const app = ReactTestUtil.renderIntoDocument(<App/>)
+          const todoitems=  ReactTestUtil.scryRenderedDOMComponentsWithTag(app,'li')
+          const addinput = ReactTestUtil.scryRenderedDOMComponentsWithTag(app,'input')
+          addinput.value = 'aaaa'
+          const addbutton = ReactTestUtil.scryRenderedDOMComponentsWithTag(app,'button')
+          ReactTestUtil.Simulate.click(addbutton[0])
+          const todoitemsAfterADD = ReactTestUtil.scryRenderedDOMComponentsWithTag(app,'li')
+          expect(todoitemsAfterADD.length).toBe(todoitems.length+1)
+      })
+  })
+```
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%9502.gif[单元测试02]
+
+
+
+
+- **Enzyme库**
+
+> - Enzyme 底层其实就是基于 react-test-renderer 和 react-dom/test-utils 的。
+> - 它在二者的基础上进行了封装提供了更加简单易用的查询、断言方法。在概念上，Enzyme 也与二者非常相似。
+> - Enzyme 的 API 通过模仿 jQuery 的 API ，使得 DOM 操作和历遍很灵活、直观。
+
+==== 下载依赖
+
+```jsx
+  npm i enzyme @wojtekmaj/enzyme-adapter-react-17
+```
+
+> - enzyme 需要对应的适配器版本
+
+- 用例 React17最新版，暂无官方适配器，使用第三方由一位来自波兰克拉科夫的React开发人员发布在npm上的 `@wojtekmaj/enzyme-adapter-react-17` 适配器
+
+==== 配置
+
+```jsx
+  import Enzyme, {mount, shallow} from 'enzyme'
+  import adapter from '@wojtekmaj/enzyme-adapter-react-17'
+  Enzyme.configure({adapter:new adapter()})
+```
+
+**测试脚本**
+
+
+```jsx
+  describe('react-test-render',function(){
+      it('NAME-TEST',function(){
+          const app = shallow(<App/>)//浅渲染
+          expect(app.find('h2').text()).toEqual('ToDoList')
+      })
+      it('DELETE-TEST',function (){
+          const app = mount(<App/>)  //将React组件加载为真实DOM节点
+          const todolength = app.find('li').length
+          app.find('button.del').at(0).simulate('click')
+          expect(app.find('li').length).toEqual(todolength-1)
+
+      })
+      it('ADD-TEST',function (){
+          const app = mount(<App/>)
+          const todolength = app.find('li').length
+          app.find('input').value = 'aaa'
+          app.find('button.add').at(0).simulate('click')
+          expect(app.find('li').length).toEqual(todolength+1)
+      })
+  })
+```
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%9503.gif[单元测试03]
+
+**Enzyme常用API*
+
+
+```jsx
+  .get(index)：返回指定位置的子组件的DOM节点
+  .at(index)：返回指定位置的子组件
+  .first()：返回第一个子组件
+  .last()：返回最后一个子组件
+  .type()：返回当前组件的类型
+  .text()：返回当前组件的文本内容
+  .html()：返回当前组件的HTML代码形式
+  .props()：返回根组件的所有属性
+  .prop(key)：返回根组件的指定属性
+  .state([key])：返回根组件的状态
+  .setState(nextState)：设置根组件的状态
+  .setProps(nextProps)：设置根组件的属性
+```
+
+
+---
