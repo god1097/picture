@@ -333,7 +333,7 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
 
 image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B8%83/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%9503.gif[单元测试03]
 
-**Enzyme常用API*
+**Enzyme常用API**
 
 
 ```jsx
