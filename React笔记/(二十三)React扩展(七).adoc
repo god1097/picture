@@ -15,7 +15,7 @@
 
 > - **(1) 安装依赖 `npm i styled-components` **
 >
-> - **(2) 引入 `import styled from 'styled-components' ` **
+> - **(2) 引入 `import styled from 'styled-components'` **
 >
 > - **(3) 基本使用 **
 
