@@ -232,7 +232,7 @@ image::https://github.com/god1097/picture/blob/main/redux-saga/%E6%B5%81%E7%A8%8
 === Saga辅助函数
 
 ```jsx
-  TakeEvery: 在发起（dispatch）到 Store 并且匹配 pattern 的每一个 action 上派生一个 saga。
+  *TakeEvery: 在发起（dispatch）到 Store 并且匹配 pattern 的每一个 action 上派生一个 saga。
   TakeLatest: 在发起到 Store 并且匹配 pattern 的每一个 action 上派生一个 saga。并自动取消之前所有已经启动但仍在执行中的 saga 任务。
   TakeLeading: 在发起到 Store 并且匹配 pattern 的每一个 action 上派生一个 saga。 它将在派生一次任务之后阻塞，直到派生的 saga 完成，然后又再次开始监听指定的 pattern。
   Throttle: 在发起到 Store 并且匹配 pattern 的一个 action 上派生一个 saga。 它在派生一次任务之后，仍然将新传入的 action 接收到底层的 buffer 中，至多保留（最近的）一个。
