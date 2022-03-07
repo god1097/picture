@@ -47,7 +47,7 @@
       console.log(res4)
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E7%94%9F%E6%88%90%E5%99%A8%E5%87%BD%E6%95%B01.png[生成器函数1]
 
 > - yield表达式本身没有返回值，或者说总是返回undefined。next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值。
 >
@@ -69,7 +69,7 @@ image::[]
     TEST1.next()
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E7%94%9F%E6%88%90%E5%99%A8%E5%87%BD%E6%95%B02.gif[生成器函数2]
 
 === 自动执行器
 
@@ -116,14 +116,14 @@ image::[]
   run(get)
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E7%94%9F%E6%88%90%E5%99%A8%E5%87%BD%E6%95%B03.gif[生成器函数3]
 
 ---
 
 
 ##  redux-saga
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E5%9B%BE%E6%A0%87.jpeg[图标]
 
 === redux-saga是什么:
 
@@ -146,12 +146,12 @@ image::[]
 >
 > - (4)redux-saga是以命令/答复的形式与各个saga之间进行通讯，当接收到指令时会执行对应的saga
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E6%B5%81%E7%A8%8B%E5%9B%BE2.jpeg[流程图]
 
 
 > - (5)saga模式将各个服务隔离开，采用集中分布式事务的编排，能够避免服务之间的循环依赖并有利于测试。同时减少了参与者的复杂性，因为他们只需要执行/回复命令
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E6%B5%81%E7%A8%8B%E5%9B%BE.png[流程图2]
 
 
 === redux-saga使用:
@@ -242,7 +242,7 @@ image::[]
 === 案例展示(两种方式)
 
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/redux-saga1.gif[案例1]
 
 
 ==== 不使用Saga辅助函数版本
@@ -280,7 +280,7 @@ image::[]
       }
   }
 ```
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%841.png[目录结构1]
 
 ```jsx
   //store.jsx
@@ -470,11 +470,11 @@ image::[]
 
 == 使用 `redux-saga` 改造React(十六)案例
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/redux-saga2.gif[案例2]
 
 ==== 目录结构:
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/redux-saga/%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%842.png[目录结构2]
 
 === 改动对比
 
