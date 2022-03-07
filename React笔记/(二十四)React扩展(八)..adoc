@@ -1,0 +1,560 @@
+# React 扩展(八)
+
+##  redux-saga:
+
+=== https://github.com/redux-saga/redux-saga#sponsors[redux-saga仓库]
+
+=== 首先在学习 `redux-saga` 之前，需要搞懂什么是 `生成器函数`
+
+## JavaScript生成器函数(Generator function)
+
+> - 生成器函数是什么:是ES6提供的一种异步编程解决方案，使得书写异步代码更优雅。
+>
+>
+> - 语法:
+
+```jsx
+  function *函数名(参数){函数体}
+```
+> - 特点:
+>
+> - (1)function关键字与函数名之间有一个*号。
+>
+> - (2)函数体内部使用 `yield` 表达式，定义不同的内部状态（yield在英语里的意思就是“产出”）。执行Generator函数生成一个遍历器对象，用该对象调用其 `next()` 方法来遍历函数内部的状态。
+>
+> - (3)调用 Generator 函数，返回一个遍历器对象，代表 Generator 函数的内部指针。以后，每次调用遍历器对象的next方法，就会返回一个有着 `value` 和 `done` 两个属性的对象。
+>
+> - (4) `value` 属性表示当前的内部状态的值，是 `yield` 表达式后面那个表达式的值; `done` 属性是一个布尔值，表示是否遍历结束
+
+```jsx
+  function *test(){
+      console.log("111")
+      const log1 = yield '111 return'
+      console.log("222",log1)
+      const log2 = yield '222 return'
+      console.log("333",log2)
+      const log3 = yield '333 return'
+      console.log("444",log3)
+  }
+      const test1 = test()
+      const res1 = test1.next()
+      console.log(res1)
+      const res2 = test1.next('aaa')
+      console.log(res2)
+      const res3 = test1.next('bbb')
+      console.log(res3)
+      const res4 = test1.next('ccc')
+      console.log(res4)
+```
+
+image::[]
+
+> - yield表达式本身没有返回值，或者说总是返回undefined。next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值。
+>
+> - **注意:** **第一次调用Generator函数，返回遍历器对象。这时候，函数内部是没有执行的，仅仅返回遍历器对象。当调用next（）方法时，函数才从头部开始执行，直到遇到yield表达式，则交出函数执行权，函数停止执行。**
+>
+> - 每次调用next方法，内部指针就从函数头部或上一次停下来的地方开始执行，直到遇到下一个yield表达式（或return语句）为止
+
+
+```jsx
+  function *TEST(){
+    setTimeout(() =>{console.log("111-susses");TEST1.next()},1000)
+    yield
+    setTimeout(() =>{console.log("222-susses");TEST1.next()},1000)
+    yield
+    setTimeout(() =>{console.log("333-susses");TEST1.next()},1000)
+    yield
+ }
+    const TEST1 = TEST()
+    TEST1.next()
+```
+
+image::[]
+
+=== 自动执行器
+
+> - **相当于 `async` `await` 源码 **
+
+```jsx
+  //yield异步操作，被包装成promise对象
+  function getdata1(){
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve('data1'),1000)
+      })
+  }
+  function getdata2(){
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve('data2'),1000)
+      })
+  }
+  function getdata3(){
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve('data3'),1000)
+      })
+  }
+  //generator函数
+  function *get(){
+      const d1 = yield getdata1()
+      console.log(d1)
+      const d2 = yield getdata2(d1)
+      console.log(d2)
+      const d3 = yield getdata3(d2)
+      console.log(d3)
+  }
+  //自动执行器
+  function run(fn){
+      const run = fn()
+      function next(res){
+          const result = run.next(res)
+          if(result.done){
+              return result.value
+          }
+          result.value.then(result => next(result))
+      }
+      next()
+  }
+  run(get)
+```
+
+image::[]
+
+---
+
+
+##  redux-saga
+
+image::[]
+
+=== redux-saga是什么:
+
+> - **redux-saga是一个以redux中间件形式存在的一个库，主要是为了更优雅地 管理 Redux 应用程序中的副作用（Side Effects），执行更高效，测试更简单，在处理故障时更容易**
+>
+> - saga的由来，它出自康奈尔大学的一篇论文，是为了解决分布式系统中的长时运行事务(LLT)的数据一致性的问题
+
+=== SideEffects
+
+> - **映射在 Javascript 程序中，Side Effects 主要指的就是：异步网络请求、本地读取 localStorage/Cookie 等外界操作**
+> - **在 Web 应用，侧重点在于 Side Effects 的优雅管理（manage），而不是 消除（eliminate）**
+
+=== redux-saga与redux-thunk有什么区别:
+
+> - (1)都是中间件，redux-saga与redux-thunk的包体积大小，相差10倍。redux作为主体，为每个中间件，提供了统一格式，下发getState、dispatch，以及调用dispatch，收集action
+>
+> - (2)redux-thunk监控传入系统中的每一个action，如果是个函数的话，那么它就会调用那个函数。这就是redux-thunk的职责。
+>
+> - (3)redux-thunk 选择以 middleware 的形式来增强 redux store 的 dispatch 方法（即：支持了 dispatch(function)），从而在拥有了异步获取数据能力的同时，又可以进一步将数据获取相关的业务逻辑 从 View 层分离出去
+>
+> - (4)redux-saga是以命令/答复的形式与各个saga之间进行通讯，当接收到指令时会执行对应的saga
+
+image::[]
+
+
+> - (5)saga模式将各个服务隔离开，采用集中分布式事务的编排，能够避免服务之间的循环依赖并有利于测试。同时减少了参与者的复杂性，因为他们只需要执行/回复命令
+
+image::[]
+
+
+=== redux-saga使用:
+
+> - (1)**npm install redux-saga** `OR` **yarn add redux-saga**
+>
+> - (2)redux-saga提供了两个MiddlewareAPI，为 `createSagaMiddleware` 、 `middleware.run`
+
+```jsx
+  import createSagaMiddleware from 'redux-saga'
+```
+
+====  `createSagaMiddleware(options)` : 创建一个 Redux middleware，并将 Sagas 连接到 Redux Store。
+
+- 其中options支持的选项有(**可以不提供**):
+
+> - sagaMontior：用于接收middleware传递的监视事件。
+> 
+> - emmiter：用于从redux向redux-saga进给actions
+> 
+> - logger：自定义日志方法（默认情况下，middleware会把所有的错误和警告记录到控制台中）。
+> 
+> - onError：当提供该方法时，middleware将带着Sagas中未被捕获的错误调用它。
+
+```jsx
+  import watchSaga from './saga-every'
+  const SagaMiddleware = createSagaMiddleware()
+  const store = createStore(reducer,applyMiddleware(SagaMiddleware))
+  //执行watchSaga，通常是程序的初始化操作
+  SagaMiddleware.run(watchSaga)
+```
+
+====  `middleware.run(saga, ...args)` : 动态地运行 saga。只能用于在 applyMiddleware 阶段之后执行Saga，其中args为提供给saga的参数。
+
+
+=== 案列简单理解
+
+> - **redux-saga中的Effect创建器，在redux-saga中主要通过effect来维护**
+
+- 官方解释：
+
+> - 每个Effect创建函数都会返回一个普通 Javascript 对象（plain JavaScript object），并且不会执行任何其它操作。
+>
+> - 执行是由 middleware 在上述迭代过程中进行的。
+>
+> - middleware 会检查每个 Effect 的描述信息，并进行相应的操作
+
+简单解释各个Effect创建器以及Effect组合器、辅助函数的作用
+
+`*` 掌握
+
+=== Effect创建器
+
+```jsx
+  *Take: 创建一个 Effect 描述信息，用来命令 middleware 在 Store 上等待指定的 action。 在发起与 pattern 匹配的 action 之前，Generator 将暂停。
+  *Put: 创建一个 Effect 描述信息，用来命令 middleware 向 Store 发起一个 action。 这个 effect 是非阻塞型的，并且所有向下游抛出的错误（例如在 reducer 中），都不会冒泡回到 saga 当中。
+  *Call: 创建一个 Effect 描述信息，用来命令 middleware 以参数 args 调用函数 fn 。
+  Apply: 类似Call。
+  *Fork: 创建一个 Effect 描述信息，用来命令 middleware 以 非阻塞调用 的形式执行 fn。
+  Spawn: 与fork类似，但创建的是被分离的任务。被分离的任务与其父级任务保持独立。
+  Join: 创建一个 Effect 描述信息，用来命令 middleware 等待之前的一个分叉任务的结果。
+  Cancel:创建一个 Effect，用以取消任务。
+  Select: 创建一个 Effect，用来命令 middleware 在当前 Store 的 state 上调用指定的选择器（即返回 selector(getState(), ...args) 的结果）。
+  ActionChannel: 创建一个 Effect，用来命令 middleware 通过一个事件 channel 对匹配 pattern 的 action 进行排序。
+  Flush: 创建一个 Effect，用来命令 middleware 从 channel 中冲除所有被缓存的数据。被冲除的数据会返回至 saga，这样便可以在需要的时候再次被利用。
+  Cancelled: 创建一个 Effect，用来命令 middleware 返回该 generator 是否已经被取消。
+  setContext: 创建一个 effect，用来命令 middleware 更新其自身的上下文。
+  getContext: 创建一个 effect，用来命令 middleware 返回 saga 的上下文中的一个特定属性。
+```
+=== Effect组合器
+
+
+```jsx
+  Race: 创建一个 Effect 描述信息，用来命令 middleware 在多个 Effect 间运行 竞赛（Race）（与 Promise.race([...]) 的行为类似）。
+  *All: 创建一个 Effect 描述信息，用来命令 middleware 并行地运行多个 Effect，并等待它们全部完成。这是与标准的 Promise#all 相当对应的 API。
+```
+
+=== Saga辅助函数
+
+```jsx
+  TakeEvery: 在发起（dispatch）到 Store 并且匹配 pattern 的每一个 action 上派生一个 saga。
+  TakeLatest: 在发起到 Store 并且匹配 pattern 的每一个 action 上派生一个 saga。并自动取消之前所有已经启动但仍在执行中的 saga 任务。
+  TakeLeading: 在发起到 Store 并且匹配 pattern 的每一个 action 上派生一个 saga。 它将在派生一次任务之后阻塞，直到派生的 saga 完成，然后又再次开始监听指定的 pattern。
+  Throttle: 在发起到 Store 并且匹配 pattern 的一个 action 上派生一个 saga。 它在派生一次任务之后，仍然将新传入的 action 接收到底层的 buffer 中，至多保留（最近的）一个。
+  但与此同时，它在 ms 毫秒内将暂停派生新的任务 —— 这也就是它被命名为节流阀（throttle）的原因。其用途，是在处理任务时，无视给定的时长内新传入的 action。
+```
+
+=== 案例展示(两种方式)
+
+
+image::[]
+
+
+==== 不使用Saga辅助函数版本
+
+```jsx
+  //App.jsx
+  class App extends Component {
+      render() {
+          return (
+              <div>
+                  <button onClick={() => {
+                      if (store.getState().list.length === 0) {
+                          store.dispatch({
+                              type:'add1'
+                          })
+                      }else{
+                          console.log('缓存',store.getState().list)
+                      }
+                  }}>
+                      ASYNC1
+                  </button>
+                  <button onClick={() => {
+                      if (store.getState().list2.length === 0) {
+                          store.dispatch({
+                              type:'add2'
+                          })
+                      }else{
+                          console.log('缓存',store.getState().list2)
+                      }
+                  }}>
+                      ASYNC2
+                  </button>
+              </div>
+          );
+      }
+  }
+```
+image::[]
+
+```jsx
+  //store.jsx
+  import {createStore,applyMiddleware} from "redux";
+  import reducer from './reducer'
+  import saga from './saga'
+  import createSagaMiddleware from 'redux-saga'
+  const SagaMiddleware = createSagaMiddleware()//创建中间件
+  const store = createStore(reducer,applyMiddleware(SagaMiddleware))
+  //运行的时机是在store创建好了之后
+  SagaMiddleware.run(saga)
+  export default store
+```
+
+```jsx
+  //saga.jsx
+  import {all} from 'redux-saga/effects'
+  import watchSaga1 from "./saga/saga1";
+  import watchSaga2 from "./saga/saga2";
+  function *watchSaga(){
+     yield all([watchSaga1(),watchSaga2()])
+  }
+  export default watchSaga
+```
+
+
+```jsx
+  //saga1.jsx
+  import {take,fork,put,call,takeEvery} from 'redux-saga/effects'
+  function *watchSaga1(){
+      while (true) {
+           //监听add1
+           yield take('add1')
+           yield fork(getList1)
+
+      }
+      //yield takeEvery('add1',getList1) //第二种方法
+  }
+  function *getList1(){
+      const result = yield call(getlistAction1)
+      //发出新的action
+      yield put({
+          type: 'change-list1',
+          data: result
+      })
+  }
+  function getlistAction1(){
+      //异步处理
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve(['1', '2', '3', '4']),1000)
+      })
+  }
+  export default watchSaga1
+```
+
+```jsx
+  //saga2.jsx
+  import {take,fork,put,call,takeEvery} from 'redux-saga/effects'
+  function *watchSaga2(){
+      while (true) {
+          //监听add2
+          yield take('add2')
+          yield fork(getList2)
+
+      }
+      //yield takeEvery('add2',getList2) //第二种方法
+  }
+  function *getList2(){
+      const result = yield call(getlistAction2_1)
+      const result2 = yield call(getlistAction2_2,result)
+      //发出新的action
+      yield put({
+          type: 'change-list2',
+          data: result2
+      })
+  }
+  function getlistAction2_1(){
+      //异步处理
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve(['5', '6', '7', '8']),1000)
+      })
+  }
+  function getlistAction2_2(result){
+      //异步处理
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve([...result,'9','10']),1000)
+      })
+  }
+  export default watchSaga2
+```
+
+```jsx
+  //reducer.jsx
+  const InitState = {
+      list:[],
+      list2:[]
+  }
+  function reducer(prevState=InitState,action={}) {
+      switch (action.type) {
+          case 'change-list1':
+              const newlist1 = {...prevState}
+              newlist1.list = action.data
+              return newlist1
+          case 'change-list2':
+              const newlist2 = {...prevState}
+              newlist2.list2 = action.data
+              return newlist2
+          default :
+              return prevState
+      }
+  }
+  export default reducer
+```
+
+---
+
+==== 使用Saga辅助函数版本
+
+
+```jsx
+  //store.jsx
+  import {createStore,applyMiddleware} from "redux";
+  import reducer from './reducer'
+  import createSagaMiddleware from 'redux-saga'
+  import watchSaga from './saga-every'
+  const SagaMiddleware = createSagaMiddleware()
+  const store = createStore(reducer,applyMiddleware(SagaMiddleware))
+  SagaMiddleware.run(watchSaga)
+  export default store
+```
+
+```jsx
+  //saga-every.jsx
+  import {takeEvery} from 'redux-saga/effects'
+  import {getList1} from "./saga/saga1";
+  import {getList2} from "./saga/saga2";
+  function *watchSaga(){
+      yield takeEvery('add1',getList1)
+      yield takeEvery('add2',getList2)
+  }
+  export default watchSaga
+```
+
+```jsx
+  //saga1.jsx
+  import {put,call} from 'redux-saga/effects'
+  function *getList1(){
+      const result = yield call(getlistAction1)
+      yield put({
+          type: 'change-list1',
+          data: result
+      })
+  }
+  function getlistAction1(){
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve(['1', '2', '3', '4']),1000)
+      })
+  }
+  export {getList1}
+```
+
+```jsx
+  //saga2.jsx
+  import {put,call} from 'redux-saga/effects'
+  function *getList2(){
+      const result = yield call(getlistAction2_1)
+      const result2 = yield call(getlistAction2_2,result)
+      yield put({
+          type: 'change-list2',
+          data: result2
+      })
+  }
+  function getlistAction2_1(){
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve(['5', '6', '7', '8']),1000)
+      })
+  }
+  function getlistAction2_2(result){
+      return new Promise((resolve, reject) =>{
+          setTimeout(() =>resolve([...result,'9','10']),1000)
+      })
+  }
+  export {getList2}
+```
+
+---
+
+== 使用 `redux-saga` 改造React(十六)案例
+
+image::[]
+
+==== 目录结构:
+
+image::[]
+
+=== 改动对比
+
+```jsx
+  //原版actionCreators
+  import { INCREMENT,DECREMENT } from "../constant"
+  export const increment = data => ({type:INCREMENT,data})
+  export const decrement = data => ({type:DECREMENT,data})
+  export const incrementAsync = (data,time) => {
+      return (dispatch) => {
+          setTimeout(() => {
+              dispatch(increment(data))
+          },time)
+      }
+  }
+```
+
+```jsx
+  //redux-saga版actionCreators
+  import {INCREMENT, DECREMENT, INCREMENTASYNC} from "../constant"
+  export const increment = data => ({type:INCREMENT,data})
+  export const decrement = data => ({type:DECREMENT,data})
+  export const incrementAsync = (data,time) => ({type:INCREMENTASYNC,data:{data,time}})
+```
+
+```jsx
+  //原版store
+  import { createStore,applyMiddleware } from "redux";
+  import reducers from "./reducers";
+  import thunk from "redux-thunk";
+  import { composeWithDevTools } from "redux-devtools-extension";
+  export default createStore(reducers,composeWithDevTools(applyMiddleware(thunk)))
+```
+
+```jsx
+  //redux-saga版store
+  import { createStore,applyMiddleware } from "redux";
+  import reducers from "./reducers";
+  import createSagaMiddleware from 'redux-saga'
+  import WatchAll from './saga'
+  const SagaMiddleware = createSagaMiddleware()
+  const store = createStore(reducers,applyMiddleware(SagaMiddleware))
+  SagaMiddleware.run(WatchAll)
+  export default store
+```
+
+=== 新增
+
+
+```jsx
+  //saga.jsx
+  import {takeEvery} from 'redux-saga/effects'
+  import {watchSaga} from './saga/saga'
+  import {INCREMENTASYNC} from "./constant";
+  function *WatchAll(){
+      yield takeEvery(INCREMENTASYNC,watchSaga)
+  }
+  export default WatchAll
+```
+
+```jsx
+  //saga/saga.jsx
+  import {put,delay} from 'redux-saga/effects'
+  import {INCREMENT} from '../constant'
+  function *watchSaga(value){
+      yield delay(value.data.time)
+      yield put({
+          type: INCREMENT,
+          data: value.data.data
+      })
+  }
+  export {watchSaga}
+```
+
+```jsx
+  //constant.js
+  export const INCREMENT = 'increment'
+  export const DECREMENT = 'decrement'
+  export const INCREMENTASYNC = 'incrementAsync'
+  export const ADD_PERSON = 'add_person'
+```
+
+---
