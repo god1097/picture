@@ -226,7 +226,7 @@ image::https://github.com/god1097/picture/blob/main/redux-saga/%E6%B5%81%E7%A8%8
 
 ```jsx
   Race: 创建一个 Effect 描述信息，用来命令 middleware 在多个 Effect 间运行 竞赛（Race）（与 Promise.race([...]) 的行为类似）。
-  *All: 创建一个 Effect 描述信息，用来命令 middleware 并行地运行多个 Effect，并等待它们全部完成。这是与标准的 Promise#all 相当对应的 API。
+  *All: 创建一个 Effect 描述信息，用来命令 middleware 并行地运行多个 Effect，并等待它们全部完成。这是标准的 Promise。
 ```
 
 === Saga辅助函数
