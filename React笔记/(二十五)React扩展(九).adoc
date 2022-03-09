@@ -1,4 +1,4 @@
-# React 扩展(八)
+# React 扩展(九)
 
 ## React Portal(传送门):
 
@@ -20,9 +20,9 @@
 
 **理想状态**
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/%E9%81%AE%E7%BD%A9%E5%B1%821.png[遮罩层1]
 
-image::[]
+
 
 
 ```jsx
@@ -87,7 +87,9 @@ image::[]
 
 **错误状态**
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/%E9%81%AE%E7%BD%A9%E5%B1%822.png[遮罩层2]
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/%E4%BC%A0%E9%80%81%E9%97%A81.gif[传送门1]
 
 
 > - *为了子组件用得像一个普通组件一样，同时又希望内容显示不受父组件影响，这时就需要Portal上场了*
@@ -95,7 +97,7 @@ image::[]
 > - *Portal就是建立一个“传送门”，让组件在表示层和其他组件没有任何差异，但是渲染的东西却像经过传送门一样出现在另一个地方*
 
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/%E4%BC%A0%E9%80%81%E9%97%A82.gif[传送门2]
 
 
 === React在v16之前的传送门实现会用到两个冷门API
@@ -140,7 +142,7 @@ image::[]
 > - Portal渲染的元素在父组件的盒子之外，但是渲染的dom节点仍在React的元素树上，事件是会冒泡从传送门的入口端冒出来的，所以在那个dom元素上的点击事件仍然能在dom树中监听到
 
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/%E4%BC%A0%E9%80%81%E9%97%A8%E4%BA%8B%E4%BB%B6%E5%86%92%E6%B3%A1%20.gif[传送门事件冒泡]
 
 
 ```jsx
@@ -180,7 +182,7 @@ image::[]
 
 ====  **获取子组件焦点并清空值**
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/forwardref.gif[forwardref]
 
 ```jsx
   class App extends Component {
@@ -260,7 +262,7 @@ image::[]
 
 > - 函数式组件是一种非常简洁的数据驱动 UI 的实现方式。如果将 React 组件拆分成三个部分 —— 数据、计算和渲染，我们可以看到性能优化的几个方向
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/memo1.png[memo1]
 
 > - 数据：利用缓存，减少 rerender 的次数
 > - 计算：精确判断更新时机和范围，减少计算量
@@ -291,7 +293,7 @@ image::[]
 ** `React.memo` 是一个高阶组件，接受一个组件作为参数返回一个新的组件。新的组件仅检查 props 变更，会将当前的 props 和 上一次的 props 进行浅层比较，相同则阻止渲染。**
 
 ```jsx
-React.memo(Component, areEqual)
+  React.memo(Component, areEqual)
 ```
 
 **第二个参数可以传入自定义的比较逻辑（仅比较 props），例如实现深层比较**
@@ -310,9 +312,9 @@ image::[]
 === 通俗区分三种性能优化方式
 
 ----
--> React.memo() ：缓存虚拟 DOM（组件 UI）
--> useCallback ：缓存函数
--> useMemo ：缓存值
+  -> React.memo() ：缓存虚拟 DOM（组件 UI）
+  -> useCallback ：缓存函数
+  -> useMemo ：缓存值
 ----
 
 
