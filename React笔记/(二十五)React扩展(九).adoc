@@ -1,0 +1,319 @@
+# React 扩展(八)
+
+## React Portal(传送门):
+
+
+=== https://zh-hans.reactjs.org/docs/portals.html#gatsby-focus-wrapper[官方文档]
+
+> - React v16新特性，增加了对Portal的直接支持
+
+=== 为什么React需要Portal(传送门)？
+
+> - React Portal之所以叫Portal，因为做的就是和“传送门”一样的事情：render到一个组件里面去，实际改变的是网页上另一处的DOM结构。
+>
+> - 在React中，一切都是组件，用组件可以表示一切界面中发生的逻辑,但是也会遇到一些难点，例如**子组件样式会受父组件限制，但子组件并不想受父组件限制的时候**
+
+
+=== 举例
+
+==== 例如 **遮罩层问题**
+
+**理想状态**
+
+image::[]
+
+image::[]
+
+
+```jsx
+  //App.jsx
+  class App extends Component {
+      state = {
+          isShow: false
+      }
+      render() {
+          return (
+              <div className='box' onClick={
+                  () =>console.log('box clicked')
+              }>
+                  <div className='left'>
+                  </div>
+                  <div className='right'>
+                      <button onClick={() =>this.setState({isShow: true})}>SHOW</button>
+                      {
+                          this.state.isShow && <Detail />
+                      }
+                  </div>
+              </div>
+          )
+      }
+  }
+```
+
+```jsx
+  //Detail.jsx
+  class Detail extends Component {
+      render() {
+          return (
+              <div style={{width:'100%',height:'100%',left:0,top:0,
+                  position:"fixed",background:'rgba(0,0,0,0.7)',zIndex:'9999999'
+              }}>
+                  <h2>Detail</h2>
+              </div>
+          )
+      }
+  }
+```
+
+> **但是一旦在父元素设置 `zIndex` 后无论子元素 `zIndex` 值有多大，子元素都会受父元素的影响**
+
+
+```css
+  //App.css
+  .right{
+      background:skyblue;
+      flex:1;
+      position:relative;
+      z-index:5;
+  }
+  .left{
+      width:200px;
+      background:yellow;
+      position:relative;
+      z-index:10;
+  }
+```
+
+
+**错误状态**
+
+image::[]
+
+
+> - *为了子组件用得像一个普通组件一样，同时又希望内容显示不受父组件影响，这时就需要Portal上场了*
+>
+> - *Portal就是建立一个“传送门”，让组件在表示层和其他组件没有任何差异，但是渲染的东西却像经过传送门一样出现在另一个地方*
+
+
+image::[]
+
+
+=== React在v16之前的传送门实现会用到两个冷门API
+
+**并且也不建议使用**
+
+----
+  > - unstable_renderSubtreeIntoContaine
+  > - unmountComponentAtNode
+----
+
+到了v16版本，React就干脆直接支持了Portal
+
+==== `Portal` 使用方法
+
+```jsx
+  import { createPortal } from 'react-dom'
+```
+
+=== *`createPortal(child,container)`*
+
+**第一个参数child是可渲染的react子项，比如元素，字符串或者片段等。第二个参数container是一个DOM元素**
+
+```jsx
+  //Detail.jsx
+  class Detail extends Component {
+      render() {
+          return createPortal(
+              <div style={{width:'100%',height:'100%',left:0,top:0,
+                  position:"fixed",background:'rgba(0,0,0,0.7)',zIndex:'9999999'
+              }}>
+                  <h2>Detail</h2>
+              </div>,document.body
+          )
+      }
+  }
+```
+
+==== `Portal` 事件冒泡
+
+
+> - Portal渲染的元素在父组件的盒子之外，但是渲染的dom节点仍在React的元素树上，事件是会冒泡从传送门的入口端冒出来的，所以在那个dom元素上的点击事件仍然能在dom树中监听到
+
+
+image::[]
+
+
+```jsx
+  //App.jsx
+  class App extends Component {
+      state = {
+          isShow: false
+      }
+      render() {
+          return (
+              <div className='box' onClick={
+                  () =>console.log('box clicked')
+              }>
+                  <div className='left'>
+                  </div>
+                  <div className='right'>
+                      <button onClick={() =>this.setState({isShow: true})}>SHOW</button>
+                      {
+                          this.state.isShow && <PortalDetail onClose={() => this.setState({isShow: false})}><h3>NOW_LOADING</h3></PortalDetail>
+                      }
+                  </div>
+              </div>
+          )
+      }
+  }
+```
+
+---
+
+## React forwardRef(React引用传递):
+
+> - React v16.3新特性
+> - 引用传递（Ref forwading）是一种通过组件向子组件自动传递 `引用ref` 的技术
+
+
+=== 举例
+
+====  **获取子组件焦点并清空值**
+
+image::[]
+
+```jsx
+  class App extends Component {
+      mytext = null
+      render() {
+          return (
+              <div>
+                  <button onClick={() =>{
+                      this.mytext.current.value = ''
+                      this.mytext.current.focus()
+                  }}>CLICK</button>
+                  <Child callback={(ref) => this.mytext= ref }></Child>
+              </div>
+          )
+      }
+  }
+  class Child extends Component{
+      myref = React.createRef()
+      componentDidMount() {
+          this.props.callback(this.myref)
+      }
+      render() {
+          return(
+              <div>
+                  CHILD
+                  <input type="text" defaultValue="11111" ref={this.myref}/>
+              </div>
+          )
+      }
+  }
+```
+
+
+==== `forwardRef` 使用方法
+
+```jsx
+  import { forwardRef } from 'react'
+```
+
+** `forwardRef` 该方法接受一个有额外ref参数的react组件函数**
+
+```jsx
+  class AppForwardRef extends Component {
+      myref = React.createRef()
+      render() {
+          return (
+              <div>
+                  <button onClick={() => {
+                      this.myref.current.value=''
+                      this.myref.current.focus()
+                  }}>CLICK</button>
+                  <Child ref={this.myref}/>
+              </div>
+          )
+      }
+  }
+  const Child = forwardRef((props,ref) => {
+      return (
+          <div>
+              CHILD
+              <input type="text" defaultValue="22222" ref={ref}/>
+          </div>
+      )
+  })
+```
+
+- 特定使用场景
+----
+  ->处理焦点、文本选择或者媒体的控制
+  ->触发必要的动画
+  ->集成第三方 DOM 库
+----
+
+---
+
+## Functional Component缓存:
+
+> - 函数式组件是一种非常简洁的数据驱动 UI 的实现方式。如果将 React 组件拆分成三个部分 —— 数据、计算和渲染，我们可以看到性能优化的几个方向
+
+image::[]
+
+> - 数据：利用缓存，减少 rerender 的次数
+> - 计算：精确判断更新时机和范围，减少计算量
+> - 渲染：精细粒度，降低组件复杂度
+
+
+**从数据缓存的层面，前面介绍了函数式组件的两个性能优化方式 —— `useCallback` 和 `useMemo` **
+-> **再来介绍第三种 `React.memo`**
+
+==== 为啥叫 `memo` 这个名字？
+
+> - 在计算机领域，记忆化是一种主要用来提升计算机程序速度的优化技术方案。
+> - 它将开销较大的函数调用的返回结果储存起来，当同样的输入再次发生时，则返回缓存好的数据，以此提升计算效率。
+
+==== 作用
+
+> - 组件仅在它的 `props` 发生改变的时候进行重新渲染。通常来说，在组件树中的React组件，只要有变化就会走一遍渲染流程。
+> - 但是使用 `React.memo` ，可以仅仅让某些组件进行渲染
+
+==== 与PureComponent 区别
+
+> - `PureComponent` 只能用于class组件，`memo` 用于functional组件
+> - `memo` 可以通过第二个参数自定义比较的逻辑，以高阶函数的形式对组件进行改造，更加灵活。
+
+
+==== `React.memo` 使用方法
+
+** `React.memo` 是一个高阶组件，接受一个组件作为参数返回一个新的组件。新的组件仅检查 props 变更，会将当前的 props 和 上一次的 props 进行浅层比较，相同则阻止渲染。**
+
+```jsx
+React.memo(Component, areEqual)
+```
+
+**第二个参数可以传入自定义的比较逻辑（仅比较 props），例如实现深层比较**
+
+- 注意：与shouldComponentUpdate 的返回值相反，该方法返回 true 代表的是阻止渲染，返回 false 代表的是 props 发生变化，应当重新渲染
+
+==== 举例
+
+```jsx
+
+```
+
+image::[]
+
+
+=== 通俗区分三种性能优化方式
+
+----
+-> React.memo() ：缓存虚拟 DOM（组件 UI）
+-> useCallback ：缓存函数
+-> useMemo ：缓存值
+----
+
+
+---
