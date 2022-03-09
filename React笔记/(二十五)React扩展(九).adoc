@@ -1,0 +1,178 @@
+# React 扩展(八)
+
+## React Portal(传送门):
+
+
+=== https://zh-hans.reactjs.org/docs/portals.html#gatsby-focus-wrapper[官方文档]
+
+> - React v16新特性，增加了对Portal的直接支持
+
+=== 为什么React需要Portal(传送门)？
+
+> - React Portal之所以叫Portal，因为做的就是和“传送门”一样的事情：render到一个组件里面去，实际改变的是网页上另一处的DOM结构。
+>
+> - 在React中，一切都是组件，用组件可以表示一切界面中发生的逻辑,但是也会遇到一些难点，例如**子组件样式会受父组件限制，但子组件并不想受父组件限制的时候**
+
+
+=== 举例
+
+==== 例如 **遮罩层问题**
+
+**理想状态**
+
+image::[]
+
+image::[]
+
+
+```jsx
+  //App.jsx
+  class App extends Component {
+      state = {
+          isShow: false
+      }
+      render() {
+          return (
+              <div className='box' onClick={
+                  () =>console.log('box clicked')
+              }>
+                  <div className='left'>
+                  </div>
+                  <div className='right'>
+                      <button onClick={() =>this.setState({isShow: true})}>SHOW</button>
+                      {
+                          this.state.isShow && <Detail />
+                      }
+                  </div>
+              </div>
+          )
+      }
+  }
+```
+
+```jsx
+  //Detail.jsx
+  class Detail extends Component {
+      render() {
+          return (
+              <div style={{width:'100%',height:'100%',left:0,top:0,
+                  position:"fixed",background:'rgba(0,0,0,0.7)',zIndex:'9999999'
+              }}>
+                  <h2>Detail</h2>
+              </div>
+          )
+      }
+  }
+```
+
+> **但是一旦在父元素设置 `zIndex` 后无论子元素 `zIndex` 值有多大，子元素都会受父元素的影响**
+
+
+```css
+  //App.css
+  .right{
+      background:skyblue;
+      flex:1;
+      position:relative;
+      z-index:5;
+  }
+  .left{
+      width:200px;
+      background:yellow;
+      position:relative;
+      z-index:10;
+  }
+```
+
+
+**错误状态**
+
+image::[]
+
+
+> - *为了子组件用得像一个普通组件一样，同时又希望内容显示不受父组件影响，这时就需要Portal上场了*
+>
+> - *Portal就是建立一个“传送门”，让组件在表示层和其他组件没有任何差异，但是渲染的东西却像经过传送门一样出现在另一个地方*
+
+
+image::[]
+
+
+=== React在v16之前的传送门实现会用到两个冷门API
+
+**并且也不建议使用**
+
+----
+> - unstable_renderSubtreeIntoContaine
+> - unmountComponentAtNode
+
+----
+
+到了v16版本，React就干脆直接支持了Portal
+
+==== `Portal` 使用方法
+
+```jsx
+  import { createPortal } from 'react-dom'
+```
+
+=== *`createPortal(child,container)`*
+
+**第一个参数child是可渲染的react子项，比如元素，字符串或者片段等。第二个参数container是一个DOM元素**
+
+```jsx
+  //Detail.jsx
+  class Detail extends Component {
+      render() {
+          return createPortal(
+              <div style={{width:'100%',height:'100%',left:0,top:0,
+                  position:"fixed",background:'rgba(0,0,0,0.7)',zIndex:'9999999'
+              }}>
+                  <h2>Detail</h2>
+              </div>,document.body
+          )
+      }
+  }
+```
+
+==== `Portal` 事件冒泡
+
+
+> - Portal渲染的元素在父组件的盒子之外，但是渲染的dom节点仍在React的元素树上，事件是会冒泡从传送门的入口端冒出来的，所以在那个dom元素上的点击事件仍然能在dom树中监听到
+
+
+image::[]
+
+
+```jsx
+  //App.jsx
+  class App extends Component {
+      state = {
+          isShow: false
+      }
+      render() {
+          return (
+              <div className='box' onClick={
+                  () =>console.log('box clicked')
+              }>
+                  <div className='left'>
+                  </div>
+                  <div className='right'>
+                      <button onClick={() =>this.setState({isShow: true})}>SHOW</button>
+                      {
+                          this.state.isShow && <PortalDetail onClose={() => this.setState({isShow: false})}><h3>NOW_LOADING</h3></PortalDetail>
+                      }
+                  </div>
+              </div>
+          )
+      }
+  }
+```
+
+---
+
+## React forwardRef(React引用传递):
+
+
+
+
