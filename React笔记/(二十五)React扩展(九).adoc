@@ -103,9 +103,8 @@ image::[]
 **并且也不建议使用**
 
 ----
-> - unstable_renderSubtreeIntoContaine
-> - unmountComponentAtNode
-
+  > - unstable_renderSubtreeIntoContaine
+  > - unmountComponentAtNode
 ----
 
 到了v16版本，React就干脆直接支持了Portal
@@ -173,6 +172,84 @@ image::[]
 
 ## React forwardRef(React引用传递):
 
+> - React v16.3新特性
+> - 引用传递（Ref forwading）是一种通过组件向子组件自动传递 `引用ref` 的技术
 
 
+=== 举例
 
+====  **获取子组件焦点并清空值**
+
+image::[]
+
+```jsx
+  class App extends Component {
+      mytext = null
+      render() {
+          return (
+              <div>
+                  <button onClick={() =>{
+                      this.mytext.current.value = ''
+                      this.mytext.current.focus()
+                  }}>CLICK</button>
+                  <Child callback={(ref) => this.mytext= ref }></Child>
+              </div>
+          )
+      }
+  }
+  class Child extends Component{
+      myref = React.createRef()
+      componentDidMount() {
+          this.props.callback(this.myref)
+      }
+      render() {
+          return(
+              <div>
+                  CHILD
+                  <input type="text" defaultValue="11111" ref={this.myref}/>
+              </div>
+          )
+      }
+  }
+```
+
+
+==== `forwardRef` 使用方法
+
+```jsx
+  import { forwardRef } from 'react'
+```
+
+** `forwardRef` 该方法接受一个有额外ref参数的react组件函数**
+
+```jsx
+  class AppForwardRef extends Component {
+      myref = React.createRef()
+      render() {
+          return (
+              <div>
+                  <button onClick={() => {
+                      this.myref.current.value=''
+                      this.myref.current.focus()
+                  }}>CLICK</button>
+                  <Child ref={this.myref}/>
+              </div>
+          )
+      }
+  }
+  const Child = forwardRef((props,ref) => {
+      return (
+          <div>
+              CHILD
+              <input type="text" defaultValue="22222" ref={ref}/>
+          </div>
+      )
+  })
+```
+
+- 特定使用场景
+----
+  ->处理焦点、文本选择或者媒体的控制
+  ->触发必要的动画
+  ->集成第三方 DOM 库
+----
