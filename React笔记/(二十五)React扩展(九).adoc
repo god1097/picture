@@ -290,7 +290,7 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
 
 ==== `React.memo` 使用方法
 
-** `React.memo` 是一个高阶组件，接受一个组件作为参数返回一个新的组件。新的组件仅检查 props 变更，会将当前的 props 和 上一次的 props 进行浅层比较，相同则阻止渲染。**
+**`React.memo` 是一个高阶组件，接受一个组件作为参数返回一个新的组件。新的组件仅检查 props 变更，会将当前的 props 和 上一次的 props 进行浅层比较，相同则阻止渲染。**
 
 ```jsx
   React.memo(Component, areEqual)
