@@ -222,7 +222,7 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
   import { forwardRef } from 'react'
 ```
 
-** `forwardRef` 该方法接受一个有额外ref参数的react组件函数**
+**`forwardRef` 该方法接受一个有额外ref参数的react组件函数**
 
 ```jsx
   class AppForwardRef extends Component {
