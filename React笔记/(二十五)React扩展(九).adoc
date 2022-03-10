@@ -303,10 +303,81 @@ image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9
 ==== 举例
 
 ```jsx
-
+  class App extends Component {
+      state = {
+          name: 'xiaohong',
+          title: 'Child'
+      }
+      render() {
+          return (
+              <div>
+                  {this.state.name}
+                  <button onClick={()=>{
+                      this.setState({name: 'xiaoming'})
+                  }}>改变名称</button>
+                  <button onClick={() =>{
+                      this.setState({title: 'Child-111'})
+                  }}>改变子组件</button>
+                  <Child title={this.state.title}/>
+              </div>
+          )
+      }
+  }
+  const Child = (props) => {
+      console.log("Child执行")
+      return (
+          <div>
+              {props.title}
+          </div>
+      )
+  }
 ```
 
-image::[]
+**不理想渲染**
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/memo2.gif[memo2]
+
+==== 使用 `memo` 对比
+
+```jsx
+  import { memo } from 'react'
+```
+
+```jsx
+  class App extends Component {
+      state = {
+          name: 'xiaohong',
+          title: 'Child'
+      }
+      render() {
+          return (
+              <div>
+                  {this.state.name}
+                  <button onClick={()=>{
+                      this.setState({name: 'xiaoming'})
+                  }}>改变名称</button>
+                  <button onClick={() =>{
+                      this.setState({title: 'Child-111'})
+                  }}>改变子组件</button>
+                  <Child title={this.state.title}/>
+              </div>
+          )
+      }
+  }
+  const Child = memo((props) => {
+      console.log("Child执行")
+      return (
+          <div>
+              {props.title}
+          </div>
+      )
+  })
+```
+
+
+**理想渲染**
+
+image::https://github.com/god1097/picture/blob/main/react%E6%8B%93%E5%B1%95%E5%9B%BE%E7%89%87%E4%B9%9D/memo3.gif[memo3]
 
 
 === 通俗区分三种性能优化方式
