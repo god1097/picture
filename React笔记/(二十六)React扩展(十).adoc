@@ -36,6 +36,9 @@ image::[]
 
 **Hello world案例**
 
+
+**GraphQL社区提供了一个支持http的中间件，express-graphql，借助此可以很简单实现一个支持graphql的服务器**
+
 ```json
   //package.json
   {
@@ -260,6 +263,14 @@ image::[]
 
 === DataBase 联动
 
+=== https://www.mongodb.com/try/download/community[MongoDB下载]
+
+**启动MongoDB**
+
+```shell
+  ./mongod -dbpath=/Users/lvjiahao/Desktop/server/DB
+```
+
 
 ```jsx
   const express = require('express')
@@ -336,3 +347,643 @@ image::[]
   app.use(express.static('public'))
   app.listen(4001)
 ```
+
+## GraphQL在普通页面使用:
+
+
+==== 实现增删改查
+
+
+```html
+  <!doctype html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport"
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Document</title>
+  </head>
+  <body>
+      <h3>GraphQL-TEST</h3>
+      <button onclick="queryFilm()">查询</button>
+      <button onclick="createFilm()">增加</button>
+      <button onclick="updateFilm()">更新</button>
+      <button onclick="deleteFilm()">删除</button>
+      <script>
+          function queryFilm(){
+              const myquery = `
+                  query{
+                      getDB{
+                          name,
+                          id,
+                          poster,
+                          price
+                      }
+                  }
+              `
+              fetch('/graphql',{
+                  method:'POST',
+                  headers:{
+                     'Content-Type': 'application/json',
+                      'Accept': 'application/json'
+                  },
+                  body:JSON.stringify({
+                      query:myquery
+                  })
+              }).then(response => response.json()).then(response => console.log(response))
+          }
+          function createFilm(){
+              const myquery = `
+                  mutation($input:FilmInput){
+                    createFilm(input:$input){
+                      id,
+                      name,
+                      poster,
+                      price
+                    }
+                  }
+              `
+              fetch('/graphql',{
+                  method:'POST',
+                  headers:{
+                      'Content-Type': 'application/json',
+                      'ACCEPT':'application/json'
+                  },
+                  body:JSON.stringify({
+                      query:myquery,
+                      variables:{
+                          input:{
+                              name:"444",
+                              price:40,
+                              poster:"http://444"
+                          }
+                      }
+                  })
+              }).then(response => response.json()).then(response => console.log(response))
+          }
+          function updateFilm(){
+              const myquery = `
+                  mutation($id:String!,$input:FilmInput){
+                    updateFilm(id:$id,input:$input){
+                      id,
+                      name,
+                      poster,
+                      price
+                    }
+                  }
+              `
+              fetch('/graphql',{
+                  method:'POST',
+                  headers:{
+                      'Content-Type': 'application/json',
+                      'ACCEPT':'application/json'
+                  },
+                  body:JSON.stringify({
+                      query:myquery,
+                      variables:{
+                          id:"6222ed0c95efe00f106fe14d",
+                          input:{
+                              name:"444-修改",
+                              price:44,
+                              poster:"http://444-修改"
+                          }
+                      }
+                  })
+              }).then(response => response.json()).then(response => console.log(response))
+          }
+          function deleteFilm(){
+              const myquery = `
+                  mutation($id:String!){
+                    deleteFilm(id:$id)
+                  }
+              `
+              fetch('/graphql',{
+                  method:'POST',
+                  headers:{
+                      'Content-Type': 'application/json',
+                      'ACCEPT':'application/json'
+                  },
+                  body:JSON.stringify({
+                      query:myquery,
+                      variables:{
+                          id:"6222ed0c95efe00f106fe14d"
+                      }
+                  })
+              }).then(response => response.json()).then(response => console.log(response))
+          }
+      </script>
+  </body>
+  </html>
+```
+
+---
+
+
+## GraphQL与React:
+
+导入依赖
+
+```jsx
+```
+
+
+=== query
+
+
+```jsx
+  import React, {Component} from 'react';
+  import {ApolloProvider,Query} from 'react-apollo'
+  import ApolloClient from 'apollo-boost'
+  import gql from 'graphql-tag'
+  const client = new ApolloClient({
+      uri:'http://localhost:4001/graphql'
+  })
+  class App
+      extends
+          Component
+  {
+      render()
+      {
+          return (
+              <ApolloProvider client={client}>
+                  <div>
+                      <Child/>
+                  </div>
+              </ApolloProvider>
+          )
+      }
+  }
+  class Child extends Component{
+      // noinspection GraphQLUnresolvedReference
+      query = gql`
+          query {
+          getDB {
+              name, 
+              id,
+              price,
+              poster
+          }
+      }`
+      render(){
+          return (
+              <Query query={this.query}>
+                  {
+                      ({loading,data})=>{
+                          return loading?<div>NOW>>>Loading</div>:
+                              <div style={{margin:"0 auto",width:"200px"}}>
+                                  {
+                                      data.getDB.map(item=>{
+                                          return <div key={item.id}>
+                                              <div>NAME:{item.name}</div>
+                                              <div>POSTER:{item.poster}</div>
+                                              <div>PRICE:{item.price}</div>
+                                              <div>ID:{item.id}</div>
+                                              <div>---------------------------</div>
+                                          </div>
+                                      })
+                                  }
+                              </div>
+                      }
+                  }
+              </Query>
+          )
+      }
+  }
+```
+
+=== query(带参数)
+
+```jsx
+  import React, {Component} from 'react';
+  import {ApolloProvider,Query} from 'react-apollo'
+  import ApolloClient from 'apollo-boost'
+  import gql from 'graphql-tag'
+  const client = new ApolloClient({
+      uri:'http://localhost:4001/graphql'
+  })
+  class App
+      extends
+          Component
+  {
+      render()
+      {
+          return (
+              <ApolloProvider client={client}>
+                  <div>
+                      <Child/>
+                  </div>
+              </ApolloProvider>
+          )
+      }
+  }
+  class Child extends Component{
+      state = {
+          id: "6222eaa695efe00f106fe145"
+      }
+      // noinspection GraphQLUnresolvedReference
+      query = gql`
+          query getDBById($id:String!){
+              getDBById(id:$id) {
+                      name,
+                      id,
+                      price,
+                      poster
+                  }
+              }`
+      render(){
+          return (
+              <div style={{margin:'0 auto',width:'200px'}}>
+                  <input type="text" onChange={(event)=>{
+                      this.setState({id:event.target.value})
+                  }} style={{width:'220px'}}/>
+              <Query query={this.query} variables={{id:this.state.id}}>
+                  {
+                      ({loading,data})=>{
+                          return loading?<div>NOW >>>Loading</div>:
+                              <div>
+                                  {
+                                      data.getDBById.map(item=>{
+                                          console.log(item)
+                                          return <div key={item.id}>
+                                              <div>NAME:{item.name}</div>
+                                              <div>POSTER:{item.poster}</div>
+                                              <div>PRICE:{item.price}</div>
+                                              <div>ID:{item.id}</div>
+                                              <div>---------------------------</div>
+                                          </div>
+                                      })
+                                  }
+                              </div>
+                      }
+                  }
+              </Query>
+              </div>
+          )
+      }
+  }
+```
+
+
+=== mutation(增)
+
+```jsx
+  import React, {Component} from 'react';
+  import {ApolloProvider,Mutation} from 'react-apollo'
+  import ApolloClient from 'apollo-boost'
+  import gql from 'graphql-tag'
+
+  const client = new ApolloClient({
+      uri:'http://localhost:4001/graphql'
+  })
+  class App extends Component {
+      render() {
+          return (
+              <ApolloProvider client={client}>
+                  <div>
+                      <Child/>
+                  </div>
+              </ApolloProvider>
+          )
+      }
+  }
+  class Child extends Component{
+
+      // noinspection GraphQLUnresolvedReference
+      createFilm = gql`
+          mutation createFilm($input: FilmInput){
+              createFilm(input:$input) {
+                  id,
+                  name,
+                  price,
+                  poster
+              }
+          }
+      `
+      render(){
+          return <div>
+                  <Mutation mutation={this.createFilm}>
+                      {
+                          (createFilm,{data})=>{
+                              console.log(data)
+                              return <div>
+                              <button onClick={() => {
+                                  createFilm({
+                                      variables:{
+                                          input:{
+                                              name:"444",
+                                              poster: "http://444",
+                                              price:40
+                                          }
+                                      }
+                                  })
+                              }}>ADD-FILM</button>
+                              </div>
+                              }}
+                  </Mutation>
+              </div>
+
+      }
+  }
+```
+
+=== mutation(改)
+
+```jsx
+  import React, {Component} from 'react';
+  import {ApolloProvider,Mutation} from 'react-apollo'
+  import ApolloClient from 'apollo-boost'
+  import gql from 'graphql-tag'
+
+  const client = new ApolloClient({
+      uri:'http://localhost:4001/graphql'
+  })
+  class App extends Component {
+      render() {
+          return (
+              <ApolloProvider client={client}>
+                  <div>
+                      <Child/>
+                  </div>
+              </ApolloProvider>
+          )
+      }
+  }
+  class Child extends Component{
+
+      // noinspection GraphQLUnresolvedReference
+      updateFilm = gql`
+          mutation updateFilm($id:String!,$input: FilmInput){
+              updateFilm(id:$id,input:$input) {
+                  id,
+                  name,
+                  price,
+                  poster
+              }
+          }
+      `
+      render(){
+          return <div>
+              <Mutation mutation={this.updateFilm}>
+                  {
+                      (updateFilm,{data})=>{
+                          console.log(data)
+                          return <div>
+                              <button onClick={() => {
+                                  updateFilm({
+                                      variables:{
+                                          id:"622327e24fb36e7c30171c02",
+                                          input:{
+                                              name:"444-修改",
+                                              poster: "http://444-修改",
+                                              price:44
+                                          }
+                                      }
+                                  })
+                              }}>UPDATE-FILM</button>
+                          </div>
+                      }}
+              </Mutation>
+          </div>
+
+      }
+  }
+```
+
+
+=== mutation(删)
+
+```jsx
+  import React, {Component} from 'react';
+  import {ApolloProvider,Mutation} from 'react-apollo'
+  import ApolloClient from 'apollo-boost'
+  import gql from 'graphql-tag'
+
+  const client = new ApolloClient({
+      uri:'http://localhost:4001/graphql'
+  })
+  class App extends Component {
+      render() {
+          return (
+              <ApolloProvider client={client}>
+                  <div>
+                      <Child/>
+                  </div>
+              </ApolloProvider>
+          )
+      }
+  }
+  class Child extends Component {
+
+      // noinspection GraphQLUnresolvedReference
+      deleteFilm = gql`
+          mutation deleteFilm($id:String!){
+              deleteFilm(id:$id)
+          }
+      `
+      render(){
+          return <div>
+              <Mutation mutation={this.deleteFilm}>
+                  {
+                      (deleteFilm,{data})=>{
+                          console.log(data)
+                          return <div>
+                              <button onClick={() => {
+                                  deleteFilm({
+                                      variables:{
+                                          id:"622327e24fb36e7c30171c02"
+                                      }
+                                  })
+                              }}>DELETE-FILM</button>
+                          </div>
+                      }}
+              </Mutation>
+          </div>
+
+      }
+  }
+```
+
+---
+
+
+
+## GraphQL与React(ToDoList案例):
+
+
+image::[]
+
+
+
+```jsx
+  //App.jsx
+  import React, {Component} from 'react';
+  import {ApolloProvider} from 'react-apollo'
+  import Create from './components/Create'
+  import Query from './components/Query'
+  import ApolloClient from "apollo-boost";
+  const client = new ApolloClient({
+      uri:'http://localhost:4001/graphql'
+  })
+  class App extends Component {
+      callback = null
+      render() {
+          return (
+              <ApolloProvider client={client}>
+                  <Create cb={()=>{
+                      this.callback()
+                  }}/>
+                  <Query callback={(refetch)=>this.callback = refetch}/>
+              </ApolloProvider>
+          )
+      }
+  }
+  export default App;
+```
+
+```jsx
+  //Create.jsx
+  import React, {Component} from "react";
+  import gql from "graphql-tag";
+  import {Mutation} from "react-apollo";
+  class Create extends Component{
+      myname = React.createRef()
+      myposter = React.createRef()
+      myprice = React.createRef()
+      // noinspection GraphQLUnresolvedReference
+      createFilm = gql`
+          mutation createFilm($input: FilmInput){
+              createFilm(input:$input) {
+                  id,
+                  name,
+                  price,
+                  poster
+              }
+          }
+      `
+      render(){
+          return <div style={{textAlign: 'center'}}>
+              <p>
+                  NAME: <input type="text" ref={this.myname}/>
+              </p>
+              <p style={{textIndent:'1em'}}>
+                  POSTER: <input type="text" ref={this.myposter} />
+              </p>
+              <p>
+                  PRICE: <input type="text" ref={this.myprice}/>
+              </p>
+              <Mutation mutation={this.createFilm}>
+                  {
+                      (createFilm,{data})=>{
+                          console.log(data)
+                          return <div>
+                              <button onClick={() => {
+                                  createFilm({
+                                      variables:{
+                                          input:{
+                                              name:this.myname.current.value,
+                                              poster: this.myposter.current.value,
+                                              price:Number(this.myprice.current.value)
+                                          }
+                                      }
+                                  }).then(res => {
+                                      this.props.cb()
+                                      this.myname.current.value = ''
+                                      this.myposter.current.value = ''
+                                      this.myprice.current.value = ''
+                                  })
+                              }} >ADD</button>
+                          </div>
+                      }}
+              </Mutation>
+          </div>
+      }
+  }
+  export default Create
+```
+
+
+```jsx
+  //Query.jsx
+  import React, {Component} from "react";
+  import gql from "graphql-tag";
+  import {Query} from "react-apollo";
+  import Delete from "./Delete";
+  class query extends Component{
+      // noinspection GraphQLUnresolvedReference
+      query = gql`
+          query {
+              getDB {
+                  name,
+                  id,
+                  price,
+                  poster
+              }
+          }`
+      render(){
+          return (
+              <Query query={this.query}>
+                  {
+                      ({loading,data,refetch})=>{
+                          this.props.callback(refetch)
+                          return loading?<div>NOW >>>Loading</div>:
+                              <div style={{margin:'0 auto',textAlign: 'center'}}>
+                                  {
+                                      data.getDB.map(item=>{
+                                          return <div key={item.id} style={{padding:'10px',lineHeight: '2'}}>
+                                              <div>NAME:{item.name}</div>
+                                              <div>POSTER:{item.poster}</div>
+                                              <div>PRICE:{item.price}</div>
+                                              <div>ID:{item.id}</div>
+                                              <Delete id={item.id} cb={()=>{
+                                                  refetch()
+                                              }
+                                              }/>
+                                          </div>
+                                      })
+                                  }
+                              </div>
+                      }
+                  }
+              </Query>
+          )
+      }
+  }
+  export default query
+```
+
+```jsx
+  //Delete.jsx
+  import React, {Component} from "react";
+  import gql from "graphql-tag";
+  import {Mutation} from "react-apollo";
+  class Delete extends Component {
+      // noinspection GraphQLUnresolvedReference
+      deleteFilm = gql`
+          mutation deleteFilm($id:String!){
+              deleteFilm(id:$id)
+          }
+      `
+      render(){
+          return <div>
+              <Mutation mutation={this.deleteFilm}>
+                  {
+                      (deleteFilm,{data})=>{
+                          return <div>
+                              <button onClick={() => {
+                                  deleteFilm({
+                                      variables:{
+                                          id:this.props.id
+                                      }
+                                  }).then((response) => this.props.cb())
+                              }}>DELETE</button>
+                          </div>
+                      }}
+              </Mutation>
+          </div>
+      }
+  }
+  export default Delete
+```
+
+---
