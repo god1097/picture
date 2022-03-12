@@ -1,6 +1,4 @@
-# React 扩展(十)
-
-## GraphQL:
+# GraphQL:
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/icon.png[icon]
 
