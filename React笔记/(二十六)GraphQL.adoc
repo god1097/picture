@@ -516,9 +516,12 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
 
 ## GraphQL与React:
 
+
 导入依赖
 
+
 ```jsx
+  npm i react-apollo apollo-boost graphql graphql-tag
 ```
 
 
