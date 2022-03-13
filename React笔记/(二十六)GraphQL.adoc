@@ -260,15 +260,28 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
   app.listen(4001)
 ```
 
+==== 添加
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%A2%9E.png[graphql-增]
+
+
+==== 添加后查询
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%A2%9E-%E6%9F%A5.png[graphql-增-查]
 
+==== 修改
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E6%94%B9.png[graphql-改]
+
+==== 修改后查询
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E6%94%B9-%E6%9F%A5.png[graphql-改-查]
 
+==== 删除
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%88%A0.png[graphql-删]
+
+==== 删除后查询
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%88%A0-%E6%9F%A5.png[graphql-删-查]
 
@@ -284,7 +297,6 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
   ./mongod -dbpath=/Users/lvjiahao/Desktop/server/DB
 ```
 
-
 ```jsx
   const express = require('express')
   const {buildSchema} = require('graphql')
@@ -292,8 +304,11 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
   const {graphqlHTTP} = require('express-graphql')
   //----连接数据库
   const mongoose = require('mongoose')
+  //useNewUrlParser这个属性会在url里识别验证用户所需的db
   mongoose.connect("mongodb://localhost:27017/maizuo",{useNewUrlParser:true,useUnifiedTopology:true})
-  //----
+  //----定义模型(model)
+  //定义 Schema ，Schema为数据库对象的集合。可以理解为表结构的定义
+  //model 是由 Schema 生成的模型，可以对数据库的操作
   const FilmModel = mongoose.model('film',mongoose.Schema({
       name:String,
       price:Number,
@@ -324,12 +339,14 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
   `)
   const root = {
       getDB:() =>{
+          //find：根据条件查询，返回的是数组
           return FilmModel.find()
       },
       getDBById:({id}) =>{
           return FilmModel.find({_id:id})
       },
       createFilm:({input})=>{
+        //增加(create)
         return FilmModel.create({...input})
       },
       updateFilm:({id,input})=>{
@@ -361,15 +378,27 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
   app.listen(4001)
 ```
 
+==== 增加
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/mongodb-graphql.png[mongodb]
+
+==== 可视化工具查询
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/mongodb-graphql2.png[mongodb2]
 
+==== 查询
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/mongodb-graphql-%E6%9F%A5.png[mongodb3]
+
+==== 修改
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/mongodb-graphql-%E6%94%B9.png[mongodb4]
 
+==== 删除
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/mongodb-graphql-%E5%88%A0.png[mongodb5]
+
+==== 查询
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/mongodb-graphql-%E5%88%A0-%E6%9F%A5.png[mongodb6]
 
@@ -380,11 +409,19 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/m
 
 ==== 实现增删改查
 
+==== 查询
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%AE%A2%E6%88%B7%E7%AB%AF-%E6%9F%A5%E8%AF%A2.png[查询]
+
+==== 增加
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%AE%A2%E6%88%B7%E7%AB%AF-%E5%A2%9E%E5%8A%A0.png[增加]
 
+==== 更新
+
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%AE%A2%E6%88%B7%E7%AB%AF-%E6%9B%B4%E6%96%B0.png[更新]
+
+==== 删除
 
 image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/graphql-%E5%AE%A2%E6%88%B7%E7%AB%AF-%E5%88%A0%E9%99%A4.png[删除]
 
