@@ -562,6 +562,19 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
   npm i react-apollo apollo-boost graphql graphql-tag
 ```
 
+> - react-apollo是Apollo数据栈在React环境的集成包之一。
+> - 要在React里使用Apollo数据栈前端至少需要三个包：apollo-client、graphql-tag和react-apollo。
+> - apollo-client用于连接到Apollo后端。
+> - graphql-tag用于编写GraphQL查询。
+> - react-apollo用于执行GraphQL查询并将结果传给React的展示组件。
+
+----
+  apollo-boost：这个包包含了搭建Apollo客户端需要的所有东西。
+  react-apollo：集成React的视图层
+  graphql-tag：解析GraphQL 查询必要依赖
+  graphql：用于解析GraphQL 查询
+----
+
 
 === query
 
@@ -573,6 +586,7 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
   import {ApolloProvider,Query} from 'react-apollo'
   import ApolloClient from 'apollo-boost'
   import gql from 'graphql-tag'
+  //实例化新客户端并提供uri属性，该属性为 GraphQL 端点
   const client = new ApolloClient({
       uri:'http://localhost:4001/graphql'
   })
