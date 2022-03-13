@@ -555,7 +555,7 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
 ## GraphQL与React:
 
 
-导入依赖
+**导入依赖**
 
 
 ```jsx
@@ -569,10 +569,10 @@ image::https://github.com/god1097/picture/blob/main/graphql-%E5%9B%BE%E7%89%87/g
 > - react-apollo用于执行GraphQL查询并将结果传给React的展示组件。
 
 ----
-  apollo-boost：这个包包含了搭建Apollo客户端需要的所有东西。
-  react-apollo：集成React的视图层
-  graphql-tag：解析GraphQL 查询必要依赖
-  graphql：用于解析GraphQL 查询
+  -> apollo-boost：这个包包含了搭建Apollo客户端需要的所有东西。
+  -> react-apollo：集成React的视图层
+  -> graphql-tag：解析GraphQL 查询必要依赖
+  -> graphql：用于解析GraphQL 查询
 ----
 
 
