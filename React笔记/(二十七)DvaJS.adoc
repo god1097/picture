@@ -1,0 +1,516 @@
+(二十七)DvaJS.adoc
+
+# DvaJS:
+
+=== https://dvajs.com/guide[DvaJS官网]
+=== https://github.com/dvajs/dva[DvaJS仓库]
+
+=== DvaJS简介
+
+> - dva 是基于现有应用架构 (redux + react-router + redux-saga 等)的一层轻量封装，没有引入任何新概念，全部代码不到 100 行
+> - dva 是基于 redux 最佳实践 实现的 framework，不是 library，会很明确地告诉你每个部件应该怎么写，这对于团队而言，会更可控。以外 dva 封装了所有其他依赖
+> - dva 实现上尽量不创建新语法，而是用依赖库本身的语法
+
+=== DvaJS特性
+
+> - 易学易用，仅有 6 个 api，对 redux 用户尤其友好，配合 umi 使用后更是降低为 0 API
+> - elm 概念，通过 reducers, effects 和 subscriptions 组织 model
+> - 插件机制，比如 dva-loading 可以自动处理 loading 状态，不用一遍遍地写 showLoading 和 hideLoading
+> - 支持 HMR，基于 babel-plugin-dva-hmr 实现 components、routes 和 models 的 HMR
+
+=== 数据流向
+
+image::[]
+
+> - 所有的state通过connect流向组件，组件听过dispatch发起action请求，通过mode中的reducer和effect去改变state,effect副作用函数统一call/fock 同步或者异步与服务进行数据交互。
+
+
+=== 快速上手
+
+> - (1)安装 dva-cli
+
+```jsx
+  npm install dva-cli -g
+```
+
+> - (2)创建新应用
+
+```jsx
+  dva new react-dva
+```
+
+image::[]
+
+> - (3)运行
+
+
+```jsx
+  npm start
+```
+
+image::[]
+
+---
+
+
+=== 项目目录
+
+> - 项目初始化后，默认的目录结构如下：
+
+image::[]
+
+==== 其中：
+
+- mock 存放用于 mock 数据的文件；
+- public 一般用于存放静态文件，打包时会被直接复制到输出目录(./dist)；
+- src 文件夹用于存放项目源代码；
+* asserts 用于存放静态资源，打包时会经过 webpack 处理；
+* components 用于存放 React 组件，一般是该项目公用的无状态组件；
+* models 用于存放模型文件
+* routes 用于存放需要 connect model 的路由组件；
+* services 用于存放服务文件，一般是网络请求等；
+* utils 工具类库
+* router.js 路由文件
+* index.js 项目的入口文件
+- editorconfig 编辑器配置文件
+- .eslintrc ESLint配置文件
+- .roadhogrc.mock.js Mock配置文件
+- .webpackrc 自定义的webpack配置文件，JSON格式，如果需要 JS 格式，可修改为 .webpackrc.js
+
+
+=== 案例(卖座)
+
+
+image::[]
+
+
+```jsx
+  //index.js
+  import dva from 'dva';
+  import './index.css';
+  // 1. Initialize
+  const app = dva({
+    history:require('history').createBrowserHistory()
+  });
+  // 2. Plugins
+  // app.use({});
+  // 3. Model
+  app.model(require('./models/maizuo').default);
+  // 4. Router
+  app.router(require('./router').default);
+  // 5. Start
+  app.start('#root');
+```
+
+=== model
+
+> - 每个model中都包含6个api,分别是state,Action,dispatch reducer,effect Subscription
+
+==== state
+
+> - state表示model的状态数据，通常是一个JavaScript对象。操作时候每次都要当做不可变数据对待，保证每次都是全新对象，没有引用关系，这样才能保证State的独立性
+
+==== Action
+
+> - Action是一个普通的JavaScript对象，是改变State的唯一途径，无论是UI事件，网络回调，还是websocket等数据源获取数据，最终都是通过dispatch函数调用一个action
+
+==== dispatch
+
+> - dispatch 函数是一个触发action函数，dispatch可以看成是触发这个行为的方式
+
+==== reducer
+
+> - reducer函数接收两个参数，reducer来自函数式编程
+
+==== Effect
+
+> - Effect 表示为副作用函数，在应用中最常见的就是异步操作。dva为了控制副作用的操作，底层是引用了redux-saga做异步流程。
+> - 由于采用了函数式编程（generator函数），所以讲异步转换成同步，从而Effect转成纯函数。
+
+==== Subscription
+
+> - Subscription 是一种从源获取数据的方法。它在函数被注册的时候调用
+
+
+```jsx
+  //models/maizuo.js
+  import {getList} from "../services/maizuo";
+  export default {
+    namespace: 'maizuo',
+    state: {
+      isShow:true,
+      list:[]
+    },
+    reducers:{
+      show(prestate,action){
+        return {...prestate,isShow:true}
+      },
+      hide(prestate,action){
+        return {...prestate,isShow:false}
+      },
+      setlist(prestate, {payload}){
+        return {...prestate,list:payload}
+      }
+    },
+    subscriptions: {
+      setup({ dispatch, history }) {
+        console.log("INIT")
+      }
+    },
+    effects: {
+      *getCinemaList(action,{call,put}) {
+        var res = yield call(getList)
+        yield put({
+          type:'setlist',
+          payload:res.data.data.cinemas
+        })
+      }
+    }
+  }
+```
+
+
+
+
+=== 路由组件
+
+---
+
+
+```jsx
+  //router.jsx
+  import React from 'react';
+  import { Router, Route, Switch,Redirect } from 'dva/router';
+  import App from './routes/App'
+  import Film from "./routes/Film";
+  import Cinema from "./routes/Cinema";
+  import Center from "./routes/Center";
+  import Detail from "./routes/Detail";
+  import Login from "./routes/Login";
+  function RouterConfig({ history }) {
+    return (
+      <Router history={history}>
+        <Switch>
+          <Route path="/login" component={Login}/>
+          <Route path="/" render={()=>
+            <App>
+              <Switch>
+                <Route path="/film" component={Film}/>
+                <Route path="/cinema" component={Cinema}/>
+                <Route path="/center" render={()=>
+                localStorage.getItem('token')?<Center/>: <Redirect  to='/login'/>
+                }/>
+                <Route path="/detail/:id" component={Detail}/>
+                <Redirect from='/' to='/film' />
+              </Switch>
+            </App>
+          } />
+        </Switch>
+      </Router>
+    );
+  }
+  export default RouterConfig;
+```
+
+```jsx
+  //routes/App.jsx
+  import React, {Component} from 'react';
+  import Tabbar from "../components/Tabbar";
+  import {connect} from "dva";
+  class App extends Component {
+    render() {
+      return (
+        <div>
+          {this.props.children}
+          {this.props.isShow && <Tabbar/>}
+        </div>
+      );
+    }
+  }
+  export default connect((state)=>{
+    return {
+      isShow:state.maizuo.isShow
+    }
+  })(App);
+```
+
+```jsx
+  //routes/Film.jsx
+  import React, {Component} from 'react';
+  import request from "../utils/request";
+  class Film extends Component {
+    state = {
+      info: []
+    }
+    componentDidMount() {
+      request('https://m.maizuo.com/gateway?cityId=110100&pageNum=1&pageSize=10&type=1&k=2094836',{
+        method: 'GET',
+        headers: {
+          'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"110100"}',
+          'X-Host': 'mall.film-ticket.film.list'
+        }
+      }).then(response=>this.setState({info:response.data.data.films}))
+    }
+    render() {
+      return (
+        <div>
+          {
+            this.state.info.map(info => {
+              return <li key={info.filmId} onClick={()=>this.props.history.push(`/detail/${info.filmId}`)}>
+                <img src={info.poster} alt={info.name} style={{width:'100px'}} />
+                <p>{info.name}</p>
+              </li>
+            })
+          }
+        </div>
+      );
+    }
+  }
+  export default Film;
+```
+
+```jsx
+  //routes/Cinema.jsx
+  import React, {Component} from 'react';
+  import {connect} from "dva";
+  class Cinema extends Component {
+    componentDidMount() {
+      if(this.props.list.length === 0){
+        this.props.dispatch({
+          type: "maizuo/getCinemaList"
+        })
+      }
+    }
+    render() {
+      return (
+        <div>
+          <ul>
+            {this.props.list.map(item=>{
+              return <li key={item.cinemaId}>{item.name}</li>
+            })}
+          </ul>
+        </div>
+      );
+    }
+  }
+  export default connect((state)=>({list:state.maizuo.list}))(Cinema);
+```
+
+```jsx
+  //routes/Center.jsx
+  import React, {Component} from 'react';
+  import {withRouter} from 'dva/router'
+  import request from "../utils/request";
+  class Center extends Component {
+    componentDidMount() {
+      request('/api/mmdb/movie/v3/list/hot.json?ct=%E6%88%90%E9%83%BD&ci=59&channelId=4',).then(function(response) {
+        console.log(response)
+      })
+      request('/users').then(response => {console.log(response.data)});
+    }
+    render() {
+      return (
+        <div>
+          Center
+          <WithRouter/>
+        </div>
+      );
+    }
+  }
+  class Child extends Component{
+    render() {
+      return (
+        <div>
+          <button onClick={()=>{
+            localStorage.removeItem('token')
+            this.props.history.push('/login')
+          }}>Exit</button>
+        </div>
+      )
+    }
+  }
+  const WithRouter = withRouter(Child)
+  export default Center;
+```
+
+```jsx
+  //routes/Detail.jsx
+  import React, {Component} from 'react';
+  import {connect} from "dva";
+  class Detail extends Component {
+    componentDidMount() {
+      this.props.dispatch({
+        type: 'maizuo/hide'
+      })
+    }
+    componentWillUnmount() {
+      this.props.dispatch({
+        type: 'maizuo/show'
+      })
+    }
+    render() {
+      return (
+        <div>
+          Detail-ID:{this.props.match.params.id}
+        </div>
+      );
+    }
+  }
+  export default connect()(Detail);
+```
+
+```jsx
+  //routes/Login.jsx
+  import React, {Component} from 'react';
+  import request from "../utils/request";
+  class Login extends Component {
+    username = React.createRef()
+    password = React.createRef()
+    render() {
+      return (
+        <div>
+          用户名：
+          <input type="text" ref={this.username}/>
+          <br/>
+          密码：
+          <input type="password" ref={this.password}/>
+          <button onClick={()=>{
+              request('/users/login', {
+                method:"POST",
+                body:JSON.stringify({
+                  username: this.username.current.value,
+                  password: this.password.current.value
+                }),
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }).then(response => {
+                if(response.data.ok){
+
+                  localStorage.setItem("token","dwawe31wqe")
+                  this.props.history.push('/center')
+
+                }else {
+                  alert('用户名密码错误')
+                }
+              })
+              this.username.current.value = ''
+              this.password.current.value = ''
+          }}>LOGIN</button>
+        </div>
+      );
+    }
+  }
+  export default Login;
+```
+
+---
+
+=== 一般组件
+
+---
+
+```jsx
+//components/Tabbar.jsx
+import React, {Component} from 'react';
+import {NavLink} from 'dva/router'
+import style from './Tabbar.css';
+class Tabbar extends Component {
+  render() {
+    return (
+      <footer>
+        <ul>
+          <li><NavLink to="/film" activeClassName={style.active}>film</NavLink></li>
+          <li><NavLink to="/cinema" activeClassName={style.active}>cinema</NavLink></li>
+          <li><NavLink to="/center" activeClassName={style.active}>center</NavLink></li>
+        </ul>
+      </footer>
+    );
+  }
+}
+export default Tabbar;
+```
+
+---
+
+
+=== 其他
+
+---
+
+
+```js
+  //services/maizuo.js
+  import request from '../utils/request';
+  export  function getList(){
+    return request('https://m.maizuo.com/gateway?cityId=110100&ticketFlag=1&k=9761834',{
+      method:"GET",
+      headers: {
+        'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.2.0","e":"16454231757924214661121","bc":"110100"}',
+        'X-Host': 'mall.film-ticket.cinema.list'
+      }
+    })
+  }
+```
+
+```js
+  //utils/request.js
+  //DvaJS封装的fetch
+  import fetch from 'dva/fetch';
+  function parseJSON(response) {
+    return response.json();
+  }
+  function checkStatus(response) {
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    }
+    const error = new Error(response.statusText);
+    error.response = response;
+    throw error;
+  }
+  /**
+   * Requests a URL, returning a promise.
+   *
+   * @param  {string} url       The URL we want to request
+   * @param  {object} [options] The options we want to pass to "fetch"
+   * @return {object}           An object containing either "data" or "err"
+   */
+  export default function request(url, options) {
+    return fetch(url, options)
+      .then(checkStatus)
+      .then(parseJSON)
+      .then(data => ({ data }))
+      .catch(err => ({ err }));
+  }
+```
+
+```json
+  //.webpackrc
+  {
+  "proxy":{
+    "/api":{
+      "target":"https://i.maoyan.com",
+       "changeOrigin":true
+      }
+    }
+  }
+```
+
+**mock模拟服务端数据**
+
+```js
+  //mock/test.js
+  export default {
+    'GET /users':{name: 'John',age:20,location: 'beijing'},
+    'POST /users/login':(request,response)=>{
+      if(request.body.username === 'xiaoming' && request.body.password === '123'){
+        response.send({ok:1})
+      }else{
+        response.send({ok:0})
+      }
+    }
+  }
+```
+
+
+---
