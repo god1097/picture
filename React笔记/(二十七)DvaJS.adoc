@@ -6,22 +6,23 @@
 
 === DvaJS简介
 
-> - dva 是基于现有应用架构 (redux + react-router + redux-saga 等)的一层轻量封装，没有引入任何新概念，全部代码不到 100 行
-> - dva 是基于 redux 最佳实践 实现的 framework，不是 library，会很明确地告诉你每个部件应该怎么写，这对于团队而言，会更可控。以外 dva 封装了所有其他依赖
-> - dva 实现上尽量不创建新语法，而是用依赖库本身的语法
+> - dva 是基于现有**应用架构 (redux + react-router + redux-saga 等)的一层轻量封装**，**没有引入任何新概念**，全部代码不到 100 行
+> - dva 是基于 `redux` 最佳实践 实现的 `framework` ，不是 `library` ，会很明确地告诉你每个部件应该怎么写，这对于团队而言，会更可控。以外 dva 封装了所有其他依赖
+> - dva 实现上**尽量不创建新语法**，而是用依赖库本身的语法
 
 === DvaJS特性
 
-> - 易学易用，仅有 6 个 api，对 redux 用户尤其友好，配合 umi 使用后更是降低为 0 API
+> - 易学易用，仅有 `6` 个 api，对 `redux` 用户尤其友好，配合 `umi` 使用后更是降低为 0 API
 > - elm 概念，通过 reducers, effects 和 subscriptions 组织 model
 > - 插件机制，比如 dva-loading 可以自动处理 loading 状态，不用一遍遍地写 showLoading 和 hideLoading
-> - 支持 HMR，基于 babel-plugin-dva-hmr 实现 components、routes 和 models 的 HMR
+> - 支持 HMR，基于 `babel-plugin-dva-hmr` 实现 `components` 、`routes` 和 `models` 的 HMR
 
 === 数据流向
 
 image::https://github.com/god1097/picture/blob/main/DVAJS/%E6%B5%81%E7%A8%8B%E5%9B%BE.png[数据流向]
 
-> - 所有的state通过connect流向组件，组件听过dispatch发起action请求，通过mode中的reducer和effect去改变state,effect副作用函数统一call/fock 同步或者异步与服务进行数据交互。
+> - 所有的state通过 `connect` 流向组件，组件经过 `dispatch` 发起 `action` 请求
+> - 通过model中的reducer和effect去改变state,effect副作用函数统一 `call/fork`  同步或者异步与服务进行数据交互。
 
 
 === 快速上手
@@ -76,6 +77,10 @@ image::https://github.com/god1097/picture/blob/main/DVAJS/%E9%A1%B9%E7%9B%AE%E7%
 - .roadhogrc.mock.js Mock配置文件
 - .webpackrc 自定义的webpack配置文件，JSON格式，如果需要 JS 格式，可修改为 .webpackrc.js
 
+
+---
+
+---
 
 === 案例(卖座)
 
