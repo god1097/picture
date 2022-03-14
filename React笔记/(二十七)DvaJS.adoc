@@ -59,7 +59,8 @@ image::https://github.com/god1097/picture/blob/main/DVAJS/dva%E5%BC%80%E5%A7%8B%
 
 image::https://github.com/god1097/picture/blob/main/DVAJS/%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95.png[项目目录]
 
-==== 其中：
+[big red aqua-background]:*其中*
+
 
 - mock 存放用于 mock 数据的文件；
 - public 一般用于存放静态文件，打包时会被直接复制到输出目录(./dist)；
