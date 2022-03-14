@@ -496,6 +496,7 @@ export default Tabbar;
   }
 ```
 
+**mock模拟服务端数据**
 
 ```js
   //mock/test.js
