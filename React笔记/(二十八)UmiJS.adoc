@@ -138,7 +138,54 @@ image::[]
 
 ---
 
+=== 案例(卖座)
 
+=== 约定式路由
+
+约定式路由也叫文件路由，就是不需要手写配置，文件系统即路由，通过src/pages目录和文件及其命名分析出路由配置, 也就是让umi根据约定好的目录结构帮我们生成路由配置文件。
+
+
+比如以下文件结构：
+
+
+----
+
+├── pages
+  ├── 404.tsx
+  ├── center.tsx
+  ├── cinema.tsx
+  ├── city.tsx
+  ├── detail
+  │   └── [id].tsx
+  ├── film
+  │   ├── _layout.tsx
+  │   ├── comingsoon.tsx
+  │   └── nowplaying.tsx
+  ├── index.tsx
+  └── login.tsx
+
+----
+
+会得到以下路由配置
+
+----
+[
+  { exact: true, path: '/', component: '@/pages/index' },
+  { exact: true, path: '/login', component: '@/pages/login' },
+  { exact: true, path: '/city', component: '@/pages/city' }
+  ...
+]
+----
+
+> - 需要注意的是，满足以下任意规则的文件不会被注册为路由
+
+> - 以.或_开头的文件或目录
+> - 以d.ts结尾的类型定义文件
+> - 以test.ts、spec.ts、e2e.ts结尾的测试文件（适用于.js、.jsx和.tsx文件）
+> - components和component目录
+> - utils和util目录
+> - 不是.js、.jsx、.ts或.tsx文件
+> - 文件内容不包含 JSX 元素
 
 
 
