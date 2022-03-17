@@ -1,7 +1,8 @@
+
 # UmiJS:
 
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/Icon.png[Icon]
 
 
 === https://umijs.org/zh-CN/docs[UmiJS官网]
@@ -60,15 +61,15 @@ image::[]
 
 === 技术收敛
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/%E6%B5%81%E7%A8%8B%E5%9B%BE.png[技术收敛]
 
 > - 这张图是给内部框架 Bigfish 画的，套到 Umi 上同样合适。他把大家常用的技术栈进行整理，收敛到一起，让大家只用 Umi 就可以完成 80% 的日常工作。
 
 === 插件体系
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/%E6%B5%81%E7%A8%8B%E5%9B%BE2.png[插件体系]
 
-可以说插件体系是 Umi 最重要的基建，因为包括 Umi内部实现也是全部由插件构成
+> - 可以说插件体系是 Umi 最重要的基建，因为包括 Umi内部实现也是全部由插件构成
 
 
 === 3.x版本的变化
@@ -105,7 +106,7 @@ image::[]
   npm start
 ```
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/umi%E5%88%9D%E6%AC%A1%E8%BF%90%E8%A1%8C.png[运行]
 
 ---
 
@@ -131,7 +132,8 @@ image::[]
       └── app.ts 运行时配置文件，可以在这里扩展运行时的能力，比如修改路由、修改 render 方法等
 ----
 
-最重要的文件是.umirc.ts配置文件，在里面可以配置各种功能和插件，umi支持不同环境读取不同的配置文件
+
+> - 最重要的文件是.umirc.ts配置文件，在里面可以配置各种功能和插件，umi支持不同环境读取不同的配置文件
 
 
 ---
@@ -140,44 +142,41 @@ image::[]
 
 === 案例(卖座)
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/%E6%A1%88%E4%BE%8B.gif[案例,280,500,align=center]
 
 
 === 约定式路由
 
-约定式路由也叫文件路由，就是不需要手写配置，文件系统即路由，通过src/pages目录和文件及其命名分析出路由配置, 也就是让umi根据约定好的目录结构帮我们生成路由配置文件。
-
-
-比如以下文件结构：
-
+> - 约定式路由也叫文件路由，就是不需要手写配置，文件系统即路由，通过src/pages目录和文件及其命名分析出路由配置, 也就是让umi根据约定好的目录结构帮我们生成路由配置文件。
+> - 比如以下文件结构：
 
 ----
 
-├── pages
-  ├── 404.tsx
-  ├── center.tsx
-  ├── cinema.tsx
-  ├── city.tsx
-  ├── detail
-  │   └── [id].tsx
-  ├── film
-  │   ├── _layout.tsx
-  │   ├── comingsoon.tsx
-  │   └── nowplaying.tsx
-  ├── index.tsx
-  └── login.tsx
+  ├── pages
+    ├── 404.tsx
+    ├── center.tsx
+    ├── cinema.tsx
+    ├── city.tsx
+    ├── detail
+    │   └── [id].tsx
+    ├── film
+    │   ├── _layout.tsx
+    │   ├── comingsoon.tsx
+    │   └── nowplaying.tsx
+    ├── index.tsx
+    └── login.tsx
 
 ----
 
-会得到以下路由配置
+> - 会得到以下路由配置
 
 ----
-[
-  { exact: true, path: '/', component: '@/pages/index' },
-  { exact: true, path: '/login', component: '@/pages/login' },
-  { exact: true, path: '/city', component: '@/pages/city' }
-  ...
-]
+  [
+    { exact: true, path: '/', component: '@/pages/index' },
+    { exact: true, path: '/login', component: '@/pages/login' },
+    { exact: true, path: '/city', component: '@/pages/city' }
+    ...
+  ]
 ----
 
 > - 需要注意的是，满足以下任意规则的文件不会被注册为路由
@@ -191,51 +190,215 @@ image::[]
 
 > - (1) 基础路由
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/%E5%9F%BA%E7%A1%80%E8%B7%AF%E7%94%B1.png[基础路由]
 
 > - (2) 重定向
 
-image::[]
-
 ```tsx
+  //pages/index.tsx
+  import { Redirect } from 'umi';
+  const Index = () => {
+    return <Redirect to="/film" />;
+  };
+  export default Index;
+  // 在film/_layout.tsx
+  import { Redirect, useLocation } from 'umi';
+  const film = (props: any) => {
+    const location = useLocation();
+    if (location.pathname === '/film' || location.pathname === '/film/') {
+      return <Redirect to="/film/nowplaying" />;
+    }
+    return (
+      <div>
+        <div style={{ height: '200px', background: 'skyblue' }}>轮播图</div>
+        {props.children}
+      </div>
+    );
+  };
+  export default film;
 ```
 
 > - (3) 嵌套路由
 
-image::[]
-
-```tsx
-```
+image::https://github.com/god1097/picture/blob/main/umi/%E5%B5%8C%E5%A5%97%E8%B7%AF%E7%94%B1.png[嵌套路由]
 
 > - (4) 动态路由
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1.png[动态路由]
 
 > - (5) 路由拦截
 
 ```tsx
+  //pages/center.tsx
+  import { useHistory } from 'umi';
+  const center = () => {
+    const history = useHistory();
+    return (
+      <div>
+        center
+        <button
+          onClick={() => {
+            localStorage.removeItem('token');
+            history.push('/login');
+          }}
+        >
+          UNLOGIN
+        </button>
+      </div>
+    );
+  };
+  center.wrappers = ['@/wrappers/Auth'];
+  export default center;
+  //wrappers/Auth.tsx
+  import { Redirect } from 'umi';
+  const Auth = (props: any) => {
+    if (localStorage.getItem('token')) {
+      return <div>{props.children}</div>;
+    }
+    return <Redirect to="/login" />;
+  };
+  export default Auth;
 ```
 
-> - (6) hash模式
+> - (6) Hash模式
 
 ```tsx
-// 在.umirc.js
-
+  // 在.umirc.js
+  export default {
+    history:{ type: 'hash' }
+  }
 ```
 
 > - (7) 声明式导航
 
-image::[]
+image::https://github.com/god1097/picture/blob/main/umi/%E5%A3%B0%E6%98%8E%E5%BC%8F%E5%AF%BC%E8%88%AA.png[声明式导航]
+
 
 ```tsx
+  //layouts/index.tsx
+  import {  NavLink } from 'umi';
+  import './index.less';
+  const IndexLayout = (props: any) => {
+    if (
+      props.location.pathname === '/city' ||
+      props.location.pathname.includes('/detail')
+    ) {
+      return <div>{props.children}</div>;
+    }
+    return (
+      <div>
+        {props.children}
+        <ul>
+          <li>
+            <NavLink to="/film" activeClassName="active">
+              film
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/cinema" activeClassName="active">
+              cinema
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/center" activeClassName="active">
+              center
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    );
+  };
+  export default IndexLayout;
 ```
 
 > - (8) 编程式导航
 
 ```tsx
+  import { history } from 'umi';
+  history.push(`/detail/${item}`)
 ```
 
 ---
+
+=== mock功能
+
+> - umi里约定mock文件夹下的文件或者page(s)文件夹下的_mock文件即mock文件，、
+> - 文件导出接口定义，支持基于require动态分析的实时刷新，支持ES6语法，以及友好的出错提示
+
+```jsx
+  // mock/api.js
+  export default {
+    'GET /users': { name: 'xiaoming', age: 20 },
+    'POST /users/login': (req, res) => {
+      if (req.body.name === 'xiaoming' && req.body.password === '123') {
+        res.send({ ok: 1 });
+      } else {
+        res.send({ ok: 0 });
+      }
+    },
+  };
+```
+
+---
+
+=== 反向代理
+
+```jsx
+  // 在.umirc.js
+  proxy: {
+    '/api': {
+      target: 'https://i.maoyan.com/',
+      changeOrigin: true
+    }
+  }
+```
+
+---
+
+=== antd
+
+
+```jsx
+  // .umirc.ts
+  antd:{ 
+    //自定义配置
+  }
+  //组件页面中使用
+  import {Button} from 'antd-mobile' 
+  <Button type="primary">add</Button>
+```
+
+---
+
+
+=== dva集成
+
+
+> - 按目录约定注册 model，无需手动 app.model
+> - 文件名即 namespace，可以省去 model 导出的 namespace key
+> - 无需手写 router.js，交给 umi 处理，支持 model 和 component 的按需加载
+> - 内置 query-string 处理，无需再手动解码和编码
+> - 内置 dva-loading 和 dva-immer，其中 dva-immer需通过配置开启(简化 reducer 编写)
+
+
+```jsx
+// .umirc.ts
+dva: {
+  //Immer 是 mobx 的作者写的一个 immutable 库，核心实现是利用 ES6 的 proxy
+  //几乎以最小的成本实现了 js 的不可变数据结构，简单易用、体量小巧、设计巧妙，满足了我们对JS不可变数据结构的需求。
+  immer: true,
+  hmr: false
+}
+```
+
+
+
+
+---
+
+
+
+
 
 
 
